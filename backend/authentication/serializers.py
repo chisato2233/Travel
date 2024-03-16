@@ -11,6 +11,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 #hkdjhfkjsdhf
 
+
+
+
+
     def create(self, validated_data):
         user = User.objects.create_user(
             username=validated_data['username'],
