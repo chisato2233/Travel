@@ -8,9 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "core-js": "^3.8.3",
+    "material-icons": "^1.13.12",
     "volar-service-vetur": "^0.0.34",
-    "vue": "^3.2.13"
+    "vue": "^3.2.13",
+    "vue-router": "^4.3.0",
+    "vuesax": "^4.0.1-alpha.25",
+    "vuesax3": "^4.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
