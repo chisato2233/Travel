@@ -1,2 +1,3 @@
 *.pyc
 backend/authentication/__pycache__/urls.cpython-311.pyc
+node_modules
