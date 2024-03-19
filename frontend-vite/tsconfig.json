@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "moduleResolution": "Node", // 修改为Node，适用于大多数前端项目和Vite
+    "lib": ["ESNext", "DOM"], // DOM.Iterable 通常已包含在 "DOM" 库中
+    "skipLibCheck": true,
+    "esModuleInterop": true, // 确保与CommonJS模块互操作性
+    "allowSyntheticDefaultImports": true, // 允许默认导入非ES模块
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true, // 确保TypeScript不输出文件，因为Vite会处理模块
+    "jsx": "preserve", // 适用于Vue JSX 或TSX
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".", // 增加基础URL，以支持路径别名
+    "paths": { // 增加路径别名示例，需要根据项目实际情况调整
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue","src/vue-shims.d.ts"],
+  "exclude": ["node_modules"] // 排除node_modules，避免不必要的类型检查
+}
