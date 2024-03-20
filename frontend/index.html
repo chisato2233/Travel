@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vite App</title>
+  </head>
+  <body>
+    <div id="app"></div>   <!-- 挂载，摆放花盆的位置 -->
+    <script type="module" src="/src/main.ts"></script>   <!-- 引用了在src下面的main.ts，来支撑整个应用 -->
+  </body>
+</html>
+
+
+<!-- 这是入口文件 在项目最外层 -->
+<!-- 加载index后，vite会解析<script type="module" src="/src/main.ts"></script>指向的Javascript -->
+<!-- vue3通过createApp函数创建应用实例 -->
