@@ -34,7 +34,18 @@ class UserLoginView(APIView):
     def post(self, request, *args, **kwargs):
         username = request.data.get('username', None)
         password = request.data.get('password', None)
-        user = authenticate(username=username, password=password)
+        #user = authenticate(username=username, password=password)
+        
+        
+        # 为了调试目的，查找或创建一个用户
+        user, created = User.objects.get_or_create(username=username, defaults={'password': 'password'})
+        
+        # 由于密码不重要（因为我们不进行验证），你可以选择设置一个默认密码
+        # 注意: 实际生产环境中不应该这样做
+
+        # 用户"验证"成功（实际上没有验证），创建并返回token
+        
+        
         
         if user is not None:
             # 用户验证成功，创建并返回token

@@ -37,7 +37,7 @@ const password = ref('');
 // 登录函数
 const login = async () => {
   try {
-    const response = await axios.post('/api/users/login', {
+    const response = await axios.post('http://localhost:8000/api/users/login/', {
       username: username.value,
       password: password.value
     });

@@ -1,11 +1,17 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import Travel from '../components/Travel.vue';
 import Login from '../components/Login.vue';
-import Diary from '../components/Diary.vue'; // Import Diary component
+import HomePage from '../components/HomePage.vue'
+//import Diary from '../components/Diary.vue'; // Import Diary component
 
-const routes: Array<RouteRecordRaw> = [
-  {
+const routes  = [
+   {
     path: '/',
+    name: 'Main',
+    component: HomePage
+  },
+  {
+    path: '/travel',
     name: 'Travel',
     component: Travel
   },
@@ -14,11 +20,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Login',
     component: Login
   },
-  {
-    path: '/diary',
-    name: 'Diary',
-    component: Diary
-  }
+  // {
+  //   path: '/diary',
+  //   name: 'Diary',
+  //   component: Diary
+  // }
 ];
 
 const router = createRouter({
