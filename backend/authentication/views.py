@@ -16,16 +16,20 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 # Local imports from serializers module
 from .serializers import UserRegistrationSerializer, UserUpdateSerializer
 
+from rest_framework import status, views
+from rest_framework.response import Response
+from .serializers import UserRegistrationSerializer  # 确保从正确的位置导入序列化器
 
 class UserRegistrationView(views.APIView):
     def post(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(password=make_password(serializer.validated_data['password']))
-            return Response({"message": "User successfully registered.", "userId": serializer.instance.id}, status=status.HTTP_201_CREATED)
+            user = serializer.save()
+            return Response({
+                "message": "User successfully registered.",
+                "userId": user.id  # 直接从创建的用户对象获取ID
+            }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 class UserLoginView(APIView):
@@ -34,20 +38,23 @@ class UserLoginView(APIView):
     def post(self, request, *args, **kwargs):
         username = request.data.get('username', None)
         password = request.data.get('password', None)
-        #user = authenticate(username=username, password=password)
+        print(username)
+        print(password)
+        user = authenticate(request,username=username, password=password)
         
-        
+
         # 为了调试目的，查找或创建一个用户
-        user, created = User.objects.get_or_create(username=username, defaults={'password': 'password'})
+        # user, created = User.objects.get_or_create(username=username, defaults={'password': 'password'})
         
         # 由于密码不重要（因为我们不进行验证），你可以选择设置一个默认密码
         # 注意: 实际生产环境中不应该这样做
 
         # 用户"验证"成功（实际上没有验证），创建并返回token
-        
-        
+        print(user)
+
         
         if user is not None:
+
             # 用户验证成功，创建并返回token
             refresh = RefreshToken.for_user(user)
             return Response({
@@ -70,6 +77,7 @@ class GetUserView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
+        print("get")
         # 从认证信息中获取用户
         user = request.user
         if user and not user.is_anonymous:

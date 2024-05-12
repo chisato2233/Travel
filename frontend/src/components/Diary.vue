@@ -58,7 +58,7 @@
       // 创建日记的方法
       const createDiary = async () => {
         try {
-          const response = await axios.post('http://localhost:8000/api/diaries', newDiary.value);
+          const response = await axios.post('http://localhost:8000/api/diaries/', newDiary.value);
           console.log(response.data.message); // 打印成功创建日记的消息
           await fetchDiaries(); // 创建日记后刷新日记列表
           // 清空新日记数据

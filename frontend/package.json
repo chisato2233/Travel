@@ -11,10 +11,11 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@vue/runtime-dom": "^3.4.27",
     "axios": "^1.6.8",
-    "vue": "^3.4.21",
+    "vue": "^3.4.27",
     "vue-router": "^4.3.0",
-    "vuex": "^4.1.0"
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",

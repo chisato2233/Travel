@@ -10,11 +10,11 @@
             <h2>用户登录</h2>
             <form @submit.prevent="login">
               <div class="form-group">
-                <label for="username">用户名：</label>
+                
                 <input type="text" id="username" v-model="username" placeholder="请输入用户名">
               </div>
               <div class="form-group">
-                <label for="password">密码：</label>
+              
                 <input type="password" id="password" v-model="password" placeholder="请输入密码">
               </div>
               <div class="button-group">
@@ -46,11 +46,16 @@
       // 登录函数
       const login = async () => {
         try {
-          const response = await axios.post('http://localhost:8000/api/users/login', {
+          console.log('登录成功:', username.value);
+          console.log('登录成功:', password.value);
+          const response = await axios.post('http://localhost:8000/api/users/login/', {
             username: username.value,
             password: password.value
           });
           const data = response.data;
+          const token = response.data.token;
+          localStorage.setItem('token', token);
+          
           console.log('登录成功:', data);
           // 在这里处理登录成功后的逻辑，例如保存token、跳转页面等
           router.push({ name: 'ProfilePage' }); // Redirect to ProfilePage.vue on successful login

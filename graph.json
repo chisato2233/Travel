@@ -1,0 +1,12 @@
+{
+  "nodes": [
+    {"id": "LocationA"},
+    {"id": "LocationB"},
+    {"id": "LocationC"}
+  ],
+  "links": [
+    {"source": "LocationA", "target": "LocationB", "weight": 5},
+    {"source": "LocationB", "target": "LocationC", "weight": 3},
+    {"source": "LocationA", "target": "LocationC", "weight": 10}
+  ]
+}

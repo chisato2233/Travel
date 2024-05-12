@@ -45,7 +45,9 @@ onMounted(async () => {
 // 获取用户信息的方法
 const fetchUserInfo = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/auth/user', {
+    console.log(`Bearer ${getToken()}`);
+
+    const response = await axios.get('http://localhost:8000/api/users/user/', {
       headers: {
         Authorization: `Bearer ${getToken()}`
       }
@@ -60,7 +62,7 @@ const fetchUserInfo = async () => {
 // 更新用户信息的方法
 const updateUserInfo = async () => {
   try {
-    const response = await axios.put('http://localhost:8000/api/auth/update', { email: newEmail.value }, {
+    const response = await axios.put('http://localhost:8000/api/users/update', { email: newEmail.value }, {
       headers: {
         Authorization: `Bearer ${getToken()}`
       }
@@ -77,7 +79,7 @@ const updateUserInfo = async () => {
 // 注销方法
 const logout = async () => {
   try {
-    const response = await axios.post('http://localhost:8000/api/auth/logout', {}, {
+    const response = await axios.post('http://localhost:8000/api/users/logout', {}, {
       headers: {
         Authorization: `Bearer ${getToken()}`
       }
