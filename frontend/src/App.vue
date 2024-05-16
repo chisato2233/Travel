@@ -18,10 +18,3 @@ onMounted(() => {
 <style>
 /* App.vue样式 */
 </style>
-
-
-
-
-
-
-

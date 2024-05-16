@@ -6,16 +6,16 @@
     <h2>用户注册</h2>
     <form @submit.prevent="register">
       <div class="form-group">
-        <label for="username">用户名：</label>
-        <input type="text" id="username" v-model="username" placeholder="请输入用户名">
+        <!-- <label for="username">用户名：</label> -->
+        <input type="text" id="username" v-model="username" placeholder="用户名">
       </div>
       <div class="form-group">
-        <label for="email">邮箱：</label>
-        <input type="email" id="email" v-model="email" placeholder="请输入邮箱">
+        <!-- <label for="email">邮箱：</label> -->
+        <input type="email" id="email" v-model="email" placeholder="邮箱">
       </div>
       <div class="form-group">
-        <label for="password">密码：</label>
-        <input type="password" id="password" v-model="password" placeholder="请输入密码">
+        <!-- <label for="password">密码：</label> -->
+        <input type="password" id="password" v-model="password" placeholder="密码">
       </div>
       <div class="button-group">
         <button type="submit" class="register-button">注册</button>
