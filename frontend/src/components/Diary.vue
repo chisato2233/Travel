@@ -76,7 +76,7 @@
       // 更新日记的方法
       const updateDiary = async (diaryId) => {
         try {
-          const response = await axios.put(`http://localhost:8000/api/diaries/${diaryId}`, {
+          const response = await axios.put(`http://localhost:8000/api/diaries/${diaryId}/`, {
             title: 'Updated Title',
             content: 'Updated content...',
             date: '2023-07-22',
@@ -92,7 +92,7 @@
       // 删除日记的方法
       const deleteDiary = async (diaryId) => {
         try {
-          const response = await axios.delete(`http://localhost:8000/api/diaries/${diaryId}/delete`);
+          const response = await axios.delete(`http://localhost:8000/api/diaries/${diaryId}/delete/`);
           console.log(response.data.message); // 打印成功删除日记的消息
           await fetchDiaries(); // 删除日记后刷新日记列表
         } catch (error) {
@@ -103,7 +103,7 @@
       // 获取用户日记列表的方法
       const fetchDiaries = async () => {
         try {
-          const response = await axios.get('http://localhost:8000/api/diaries/my-diaries');
+          const response = await axios.get('http://localhost:8000/api/diaries/my-diaries/');
           diaries.value = response.data; // 将获取到的日记列表存储到 diaries 变量中
         } catch (error) {
           console.error('获取用户日记失败:', error);

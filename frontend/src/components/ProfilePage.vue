@@ -1,11 +1,10 @@
-<!-- 未登陆时，跳转到登录界面（Login.vue），若无账号，可在登陆界面中选择注册（Register.vue）
-     已登录，自动显示个人信息，通过按钮更新用户信息，用户注销 
-            自动显示个人信息，通过按钮更新用户信息，用户注销的功能由UserInfoForm.vue实现 -->
-
-<!-- 在页面最底下还有一个导航栏 -->
 <template>
   <div class="profile-page">
     <h2>个人主页</h2>
+    
+    <!-- 显示错误信息 -->
+    <p v-if="error" class="error-message">{{ error }}</p>
+    
     <!-- 显示用户信息 -->
     <div v-if="userInfo">
       <p><strong>用户名:</strong> {{ userInfo.username }}</p>
@@ -25,81 +24,112 @@
     <button @click="logout" v-if="userInfo">注销</button>
 
     <!-- 导航栏组件 -->
-    <Navbar/>
+    <Navbar />
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import Navbar from './Navbar.vue'; // 导入导航栏组件
+import Navbar from './Navbar.vue';
 
 const userInfo = ref(null);
 const newEmail = ref('');
+const error = ref(null);
 
-// 页面加载时获取用户信息
+const isUserLoggedIn = ref(false);
+
 onMounted(async () => {
   await fetchUserInfo();
 });
 
-// 获取用户信息的方法
 const fetchUserInfo = async () => {
   try {
-    console.log(`Bearer ${getToken()}`);
-
-    const response = await axios.get('http://localhost:8000/api/users/user/', {
-      headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
-    });
-    userInfo.value = response.data;
+    const token = getToken();
+    if (token) {
+      isUserLoggedIn.value = await isLoggedIn();
+      const response = await axios.get('http://localhost:8000/api/users/user/', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      userInfo.value = response.data;
+    }
   } catch (error) {
     console.error('获取用户信息失败:', error);
-    // 处理错误，例如重定向到登录页面
+    showError('获取用户信息失败: ' + error.message);
   }
 };
 
-// 更新用户信息的方法
 const updateUserInfo = async () => {
   try {
-    const response = await axios.put('http://localhost:8000/api/users/update', { email: newEmail.value }, {
-      headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
-    });
-    console.log(response.data.message); // 打印成功更新用户信息的消息
-    await fetchUserInfo(); // 更新用户信息后刷新页面显示最新信息
-    newEmail.value = ''; // 清空输入框
+    const token = getToken();
+    if (token) {
+      const response = await axios.put('http://localhost:8000/api/users/update/', { email: newEmail.value }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      console.log(response.data.message);
+      await fetchUserInfo();
+      newEmail.value = '';
+    }
   } catch (error) {
     console.error('更新用户信息失败:', error);
-    // 处理错误，例如显示错误消息
+    showError('更新用户信息失败: ' + error.message);
   }
 };
 
-// 注销方法
 const logout = async () => {
   try {
-    const response = await axios.post('http://localhost:8000/api/users/logout', {}, {
-      headers: {
-        Authorization: `Bearer ${getToken()}`
-      }
-    });
-    console.log(response.data.message); // 打印成功注销的消息
-    // 导航到登录页面
-    window.location.href = '/login';
+    const token = getToken();
+    if (token) {
+      const response = await axios.post('http://localhost:8000/api/users/logout/', {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      console.log(response.data.message);
+      isUserLoggedIn.value = false;
+      window.location.href = '/login';
+    }
   } catch (error) {
     console.error('注销失败:', error);
-    // 处理错误，例如显示错误消息
+    showError('注销失败: ' + error.message);
   }
 };
 
-// 获取存储在本地的用户token
+const showError = (errorMessage) => {
+  error.value = errorMessage;
+};
+
 function getToken() {
   return localStorage.getItem('token');
+}
+
+async function isLoggedIn() {
+  try {
+    const response = await axios.get('http://localhost:8000/api/users/check-auth', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    
+    return response.data.isLoggedIn;
+  } catch (error) {
+    console.error('检查用户登录状态失败:', error);
+    return false;
+  }
 }
 </script>
 
 <style scoped>
+
+.error-message {
+  color: red;
+}
+
 .profile-page {
   max-width: 800px;
   margin: auto;
@@ -127,6 +157,3 @@ button:hover {
   background-color: #0056b3;
 }
 </style>
-
-
-    
