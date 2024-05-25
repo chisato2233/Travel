@@ -73,7 +73,6 @@ const login = async () => {
     const token = response.data.token;
     localStorage.setItem('token', token);
     console.log('登录成功:', data);
-    await isLoggedIn(); // 更新用户登录状态
     router.push({ name: 'ProfilePage' });
   } catch (error) {
     console.error('登录失败:', error);
@@ -94,8 +93,8 @@ const register = async () => {
     });
     const data = response.data;
     console.log('注册成功:', data);
-    await isLoggedIn(); // 更新用户登录状态
-    // 注册成功后的逻辑，例如提示用户、跳转页面等
+    errorMessage.value = '注册成功，请登录。';
+    router.push({ name: 'Login' });
   } catch (error) {
     console.error('注册失败:', error);
     errorMessage.value = '注册失败，请稍后重试。';
@@ -110,23 +109,23 @@ const closeLogin = () => {
   router.push({ name: 'HomePage' });
 };
 
-async function isLoggedIn() {
-  try {
-    const response = await axios.get('http://localhost:8000/api/users/user/', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-    if (response.status === 200) {
-      console.log('用户已登录');
-      return true;
-    }
-  } catch (error) {
-    console.error('用户未登录:', error);
-    return false;
-  }
-}
-</script>
+// async function isLoggedIn() {
+//   try {
+//     const response = await axios.get('http://localhost:8000/api/users/user/', {
+//       headers: {
+//         Authorization: `Bearer ${localStorage.getItem('token')}`
+//       }
+//     });
+//     if (response.status === 200) {
+//       console.log('用户已登录');
+//       return true;
+//     }
+//   } catch (error) {
+//     console.error('用户未登录:', error);
+//     return false;
+//   }
+// }
+// </script>
 
 
 <style scoped>
@@ -292,23 +291,20 @@ h2 {
   flex: 1;
   padding: 10px;
   border: none;
-  border-radius: 20px; /* 将按钮形状修改为两端是圆形 */
+  border-right: 1px solid #ccc; /* 添加右边框作为分隔线 */
   cursor: pointer;
-  background-color: #4CAF50; /* 设置按钮初始颜色为绿色 */
-  color: white; /* 设置字体颜色为白色 */
+  background-color: transparent; /* 去掉按钮背景颜色 */
+  color: grey; /* 设置字体颜色为灰色 */
   font-weight: bold; /* 设置字体加粗 */
-  
-  transition: background-color 0.3s;
+  font-size: 16px;
+  transition: color 0.3s;
 }
 
-.tab-buttons button.active {
-  background-color: #09803c; /* 设置选中按钮的颜色为深绿色 */
+/* 移除最后一个按钮的右边框 */
+.tab-buttons button:last-child {
+  border-right: none;
 }
-
-.tab-buttons button:hover {
-  background-color: #308834; /* 设置鼠标悬停时的颜色变深 */
-}
-
+ 
 .error-message {
   color: red;
   text-align: center;

@@ -1,16 +1,39 @@
 <template>
   <div class="travel-container">
-    <h2>寻路</h2>
+    <div class="form-group">
+      <select id="routeType" v-model="routeType" class="rounded-input">
+        <option value="single">单个目的地</option>
+        <option value="multi">多个目的地</option>
+      </select>
+    </div>
+
     <div class="form-group">
       <input type="text" id="startLocation" v-model="startLocation" placeholder="起点" class="rounded-input" @focus="inputFocus">
     </div>
+
+    <div v-if="routeType === 'multi'" class="form-group">
+      <input type="text" id="viaPoint1" v-model="viaPoint1" placeholder="途径点1" class="rounded-input" @focus="inputFocus">
+    </div>
+    <div v-if="routeType === 'multi'" class="form-group">
+      <input type="text" id="viaPoint2" v-model="viaPoint2" placeholder="途径点2" class="rounded-input" @focus="inputFocus">
+    </div>
+
     <div class="form-group">
       <input type="text" id="endLocation" v-model="endLocation" placeholder="终点" class="rounded-input" @focus="inputFocus">
     </div>
+
+    <div class="form-group">
+      <select id="strategy" v-model="strategy" class="rounded-input">
+        <option value="shortest">最短路线</option>
+        <option value="fastest">最快路线</option>
+      </select>
+    </div>
+
     <button class="search-button" @click="searchRoute" :disabled="isSearching">
       <span v-if="isSearching">查询中...</span>
       <span v-else>查询</span>
     </button>
+
     <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
   </div>
   
@@ -25,17 +48,33 @@ import Navbar from './Navbar.vue'; // 导入导航栏组件
 
 const startLocation = ref('');
 const endLocation = ref('');
+const viaPoint1 = ref('');
+const viaPoint2 = ref('');
+const strategy = ref('shortest');
+const routeType = ref('single');
 const errorMessage = ref('');
 const isSearching = ref(false); // 控制查询状态
 
 const searchRoute = async () => {
   try {
     isSearching.value = true; // 开始查询，禁用按钮
-    const response = await axios.post('http://localhost:8000/api/routes/optimal/', {
-      startLocation: startLocation.value,
-      endLocation: endLocation.value,
-      strategy: 'shortest' // 默认选择最短路线策略
-    });
+    let response;
+
+    if (routeType.value === 'single') {
+      response = await axios.post('http://localhost:8000/api/routes/optimal/', {
+        startLocation: startLocation.value,
+        endLocation: endLocation.value,
+        strategy: strategy.value
+      });
+    } else {
+      response = await axios.post('http://localhost:8000/api/routes/multi-destinations/', {
+        startLocation: startLocation.value,
+        endLocation: endLocation.value,
+        viaPoints: [viaPoint1.value, viaPoint2.value],
+        strategy: strategy.value
+      });
+    }
+
     const data = response.data;
     console.log('最优路线:', data);
     // 在这里处理获取最优路线成功后的逻辑，例如显示路线信息等
@@ -78,7 +117,9 @@ h2 {
 }
 
 .rounded-input:focus {
-  border-color: #4CAF50; /* 输入框聚焦时边框颜色变成绿色 */
+  outline: none; /* 去掉默认的聚焦边框 */
+  border-color: #4CAF50; /* 聚焦时边框颜色 */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* 聚焦时的阴影效果 */
 }
 
 .search-button {
@@ -102,4 +143,13 @@ h2 {
   text-align: center;
   margin-top: 10px;
 }
+
+.travel-container {
+  width: 400px;
+  margin: 50px auto; /* 50px 的顶部边距，水平居中 */
+  padding: 50px; /* 添加内边距，使内容与盒子模型边缘有一定距离 */
+  /* border: 1px solid #ccc; 添加边框 */
+  border-radius: 10px; /* 圆角边框 */
+}
+
 </style>

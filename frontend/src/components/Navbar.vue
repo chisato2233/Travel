@@ -63,7 +63,7 @@ const profileLink = computed(() => {
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #f0f0f0;
+  background-color: #008000; /* 绿色背景 */
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
@@ -72,8 +72,10 @@ const profileLink = computed(() => {
 
 .nav-item {
   text-decoration: none;
-  color: #333;
+  color: #fff; /* 白色字体 */
   cursor: pointer;
+  font-weight: bold; /* 加粗字体 */
 }
 </style>
+
 

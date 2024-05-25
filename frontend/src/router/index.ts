@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import axios from 'axios';
-
 import Login from '../components/Login.vue';
 import ProfilePage from '../components/ProfilePage.vue';
 import Register from '../components/Register.vue';
@@ -47,19 +45,17 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach(async (to, from, next) => {
-  if (to.path === '/profile') {
-    if (!await isLoggedIn()) {
-      next({ name: 'Login' });
-    } else {
-      next();
-    }
-  } else if (to.meta.requiresAuth && !await isLoggedIn()) {
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+  if (requiresAuth && !token) {
     next({ name: 'Login' });
   } else {
     next();
   }
 });
+
 
 async function isLoggedIn() {
   // try {
@@ -91,3 +87,4 @@ async function isLoggedIn() {
 }
 
 export default router;
+

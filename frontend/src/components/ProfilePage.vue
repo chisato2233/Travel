@@ -28,7 +28,6 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -48,8 +47,8 @@ const fetchUserInfo = async () => {
   try {
     const token = getToken();
     if (token) {
-      isUserLoggedIn.value = await isLoggedIn();
-      const response = await axios.get('http://localhost:8000/api/users/user/', {
+      isUserLoggedIn.value = true;
+      const response = await axios.get('http://localhost:8000/api/auth/user/', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -58,7 +57,11 @@ const fetchUserInfo = async () => {
     }
   } catch (error) {
     console.error('获取用户信息失败:', error);
-    showError('获取用户信息失败: ' + error.message);
+    if (error.response && error.response.status === 401) {
+      showError('Token无效或已过期');
+    } else {
+      showError('获取用户信息失败: ' + error.message);
+    }
   }
 };
 
@@ -66,7 +69,7 @@ const updateUserInfo = async () => {
   try {
     const token = getToken();
     if (token) {
-      const response = await axios.put('http://localhost:8000/api/users/update/', { email: newEmail.value }, {
+      const response = await axios.put('http://localhost:8000/api/auth/update/', { email: newEmail.value }, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -77,20 +80,27 @@ const updateUserInfo = async () => {
     }
   } catch (error) {
     console.error('更新用户信息失败:', error);
-    showError('更新用户信息失败: ' + error.message);
+    if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+      showError('请求无效或未经授权');
+    } else {
+      showError('更新用户信息失败: ' + error.message);
+    }
   }
 };
 
 const logout = async () => {
   try {
     const token = getToken();
-    if (token) {
-      const response = await axios.post('http://localhost:8000/api/users/logout/', {}, {
+    const refreshToken = getRefreshToken();
+    if (token && refreshToken) {
+      const response = await axios.post('http://localhost:8000/api/auth/logout/', { refreshToken: refreshToken }, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
       console.log(response.data.message);
+      localStorage.removeItem('token');  // 清除 token
+      localStorage.removeItem('refreshToken');  // 清除 refresh token
       isUserLoggedIn.value = false;
       window.location.href = '/login';
     }
@@ -108,38 +118,12 @@ function getToken() {
   return localStorage.getItem('token');
 }
 
-async function isLoggedIn() {
-  // try {
-  //   const response = await axios.get('http://localhost:8000/api/users/check-auth', {
-  //     headers: {
-  //       Authorization: `Bearer ${localStorage.getItem('token')}`
-  //     }
-  //   });
-
-  //   return response.data.isLoggedIn;
-  // } catch (error) {
-  //   console.error('检查用户登录状态失败:', error);
-  //   return false;
-  // }
-  try {
-    const response = await axios.get('http://localhost:8000/api/users/user/', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-    if (response.status === 200) {
-      console.log('用户已登录');
-      return true;
-    }
-  } catch (error) {
-    console.error('用户未登录:', error);
-    return false;
-  }
+function getRefreshToken() {
+  return localStorage.getItem('refreshToken');
 }
 </script>
 
 <style scoped>
-
 .error-message {
   color: red;
 }
@@ -160,14 +144,15 @@ input {
 
 button {
   padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
+  background-color: #28a745; /* 绿色背景 */
+  color: white; /* 白色字体 */
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: bold; /* 加粗字体 */
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #218838; /* 深绿色背景 */
 }
 </style>
