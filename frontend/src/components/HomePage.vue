@@ -28,11 +28,14 @@ import Login from './Login.vue';
 const recommendedDestinations = ref([]);
 const searchResults = ref([]);
 
+
 // 从 localStorage 中获取令牌，如果不存在则返回 null
 const token = localStorage.getItem('token');
 
 const searchType = ref('attractions'); // 初始搜索类型
 const searchParams = ref({}); // 搜索参数
+
+
 
 const performSearch = async (query) => {
   try {
@@ -71,11 +74,12 @@ const handleLoginClose = () => {
 };
 
 // 监听用户登录状态的变化，如果用户登录成功，则隐藏登录组件
-watch(isLoggedIn, (newValue) => {
+watch(localStorage.getItem("token"), (newValue) => {
   if (newValue) {
     handleLoginClose(); // 登录成功后关闭登录组件
   }
 });
+
 
 // 在进入主页后一段时间后显示登录组件
 setTimeout(() => {
@@ -89,6 +93,7 @@ const updateSearchType = (type) => {
 const updateSearchParams = (params) => {
   searchParams.value = params;
 };
+
 </script>
 
 <style scoped>

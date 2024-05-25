@@ -56,5 +56,35 @@ router.beforeEach((to, from, next) => {
   }
 });
 
+
+async function isLoggedIn() {
+  // try {
+  //   const response = await axios.get('http://localhost:8000/api/users/check-auth', {
+  //     headers: {
+  //       Authorization: `Bearer ${localStorage.getItem('token')}`
+  //     }
+  //   });
+    
+  //   return response.data.isLoggedIn;
+  // } catch (error) {
+  //   console.error('检查用户登录状态失败:', error);
+  //   return false;
+  // }
+    try {
+    const response = await axios.get('http://localhost:8000/api/users/user/', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    if (response.status === 200) {
+      console.log('用户已登录');
+      return true;
+    }
+  } catch (error) {
+    console.error('用户未登录:', error);
+    return false;
+  }
+}
+
 export default router;
 
