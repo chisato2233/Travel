@@ -63,7 +63,7 @@ const createDiary = async () => {
     }
 
     // 获取当前登录用户的信息
-    const userResponse = await axios.get('http://localhost:8000/api/auth/user', {
+    const userResponse = await axios.get('http://localhost:8000/api/users/user', {
       headers: {
         Authorization: `Bearer ${userToken}` // 使用存储在 localStorage 中的用户 token
       }
@@ -73,7 +73,7 @@ const createDiary = async () => {
     const userId = userResponse.data.id;
 
     // 发送创建日记的请求，包括用户ID
-    const response = await axios.post('http://localhost:8000/api/diaries/', {
+    const response = await axios.post('http://localhost:8000/api/diaries/create/', {
       title: newDiary.value.title,
       content: newDiary.value.content,
       date: newDiary.value.date,
@@ -117,7 +117,7 @@ const updateDiary = async (diaryId, updatedDiary) => {
     }
 
     // 发送更新日记的请求，包括用户 token 和更新后的日记内容
-    const response = await axios.put(`http://localhost:8000/api/diaries/${diaryId}/`, updatedDiary, {
+    const response = await axios.put(`http://localhost:8000/api/diaries/update/${diaryId}/`, updatedDiary, {
       headers: {
         Authorization: `Bearer ${userToken}`
       }
@@ -136,7 +136,7 @@ const updateDiary = async (diaryId, updatedDiary) => {
 // 删除日记的方法
 const deleteDiary = async (diaryId) => {
   try {
-    const response = await axios.delete(`http://localhost:8000/api/diaries/${diaryId}/delete/`);
+    const response = await axios.delete(`http://localhost:8000/api/diaries/delete/${diaryId}/`);
     console.log(response.data.message); // 打印成功删除日记的消息
     await fetchDiaries(); // 删除日记后刷新日记列表
   } catch (error) {
@@ -145,14 +145,21 @@ const deleteDiary = async (diaryId) => {
 };
 
 // 获取用户日记列表的方法
+// 获取用户日记列表的方法
 const fetchDiaries = async () => {
+  const token = localStorage.getItem('userToken'); // 从 localStorage 获取 token
   try {
-    const response = await axios.get('http://localhost:8000/api/diaries/my-diaries/');
+    const response = await axios.get('http://localhost:8000/api/diaries/my-diaries/', {
+      headers: {
+        'Authorization': `Bearer ${token}` // 在请求头中添加 Authorization
+      }
+    });
     diaries.value = response.data; // 将获取到的日记列表存储到 diaries 变量中
   } catch (error) {
     console.error('获取用户日记失败：', error);
   }
 };
+
 </script>
 
 <style scoped>
