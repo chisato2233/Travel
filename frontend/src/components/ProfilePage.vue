@@ -48,7 +48,7 @@ const fetchUserInfo = async () => {
     const token = getToken();
     if (token) {
       isUserLoggedIn.value = true;
-      const response = await axios.get('http://localhost:8000/api/auth/user/', {
+      const response = await axios.get('http://localhost:8000/api/users/user/', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -69,7 +69,7 @@ const updateUserInfo = async () => {
   try {
     const token = getToken();
     if (token) {
-      const response = await axios.put('http://localhost:8000/api/auth/update/', { email: newEmail.value }, {
+      const response = await axios.put('http://localhost:8000/api/users/update/', { email: newEmail.value }, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -93,7 +93,7 @@ const logout = async () => {
     const token = getToken();
     const refreshToken = getRefreshToken();
     if (token && refreshToken) {
-      const response = await axios.post('http://localhost:8000/api/auth/logout/', { refreshToken: refreshToken }, {
+      const response = await axios.post('http://localhost:8000/api/users/logout/', { refreshToken: refreshToken }, {
         headers: {
           Authorization: `Bearer ${token}`
         }
