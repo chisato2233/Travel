@@ -58,6 +58,7 @@ class UserLoginView(APIView):
             # 用户验证成功，创建并返回token
             refresh = RefreshToken.for_user(user)
             return Response({
+                'refresh':str(refresh),
                 'token': str(refresh.access_token),
                 'user': {
                     'id': user.id,
@@ -124,3 +125,17 @@ class UserLogoutView(APIView):
             return Response({"message": "User successfully logged out."}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": "Unauthorized or invalid token."}, status=status.HTTP_401_UNAUTHORIZED)
+        
+
+'''
+curl -X POST http://127.0.0.1:8000/api/diaries/create/ -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE2ODc3NDMxLCJpYXQiOjE3MTY4NzcxMzEsImp0aSI6IjZkYjkyYmNkYTJiODQyZmRhZjgzYzE5OThkZTI1NDE1IiwidXNlcl9pZCI6MTN9.9mcq_KFxhVXgy0Ta1_PI8RY2NjV8chQw5GbAhHm62-0
+" -H "Content-Type: application/json" -d '{
+{
+  "userId":"13"
+  "title": "My Travel Diary",
+  "content": "Today, I visited...",
+  "date": "2023-07-21",
+  "location": "LocationA"
+}'
+
+'''

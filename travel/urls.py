@@ -20,6 +20,6 @@ from django.contrib.auth.views import LoginView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('backend.authentication.urls')),
-   # path('api/routes/',include('backend.tourist_route.urls')),
-    #path('api/diaries',include('backend.diaries.urls')),
+    path('api/routes/',include('backend.tourist_routes.urls')),
+    path('api/diaries/',include('backend.diaries.urls')),
 ]

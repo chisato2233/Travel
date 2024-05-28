@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import DiaryEntry
-from compress import huff_decompress,huff_compress
+from .compress import huff_decompress,huff_compress
 from rest_framework import serializers
 import json
 

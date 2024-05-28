@@ -1,10 +1,10 @@
 <template>
   <div class="profile-page">
     <h2>个人主页</h2>
-    
+
     <!-- 显示错误信息 -->
     <p v-if="error" class="error-message">{{ error }}</p>
-    
+
     <!-- 显示用户信息 -->
     <div v-if="userInfo">
       <p><strong>用户名:</strong> {{ userInfo.username }}</p>
@@ -144,15 +144,19 @@ input {
 
 button {
   padding: 8px 16px;
-  background-color: #28a745; /* 绿色背景 */
-  color: white; /* 白色字体 */
+  background-color: #28a745;
+  /* 绿色背景 */
+  color: white;
+  /* 白色字体 */
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-weight: bold; /* 加粗字体 */
+  font-weight: bold;
+  /* 加粗字体 */
 }
 
 button:hover {
-  background-color: #218838; /* 深绿色背景 */
+  background-color: #218838;
+  /* 深绿色背景 */
 }
 </style>

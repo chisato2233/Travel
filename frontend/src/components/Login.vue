@@ -8,8 +8,10 @@
         <div class="center-box">
           <button class="close-button" @click="closeLogin">✕</button>
           <div class="tab-buttons">
-            <button :class="{ active: showLogin }" @click="showLogin = true; showRegister = false" :disabled="isProcessing">登录</button>
-            <button :class="{ active: showRegister }" @click="showLogin = false; showRegister = true" :disabled="isProcessing">注册</button>
+            <button :class="{ active: showLogin }" @click="showLogin = true; showRegister = false"
+              :disabled="isProcessing">登录</button>
+            <button :class="{ active: showRegister }" @click="showLogin = false; showRegister = true"
+              :disabled="isProcessing">注册</button>
           </div>
           <!-- 登录表单 -->
           <form v-if="showLogin" @submit.prevent="login">
@@ -20,7 +22,8 @@
               <input type="password" id="password" v-model="password" placeholder="密码">
             </div>
             <div class="button-group">
-              <button type="submit" class="login-button" :class="{ disabled: isProcessing }" :disabled="isProcessing">登录</button>
+              <button type="submit" class="login-button" :class="{ disabled: isProcessing }"
+                :disabled="isProcessing">登录</button>
             </div>
           </form>
           <!-- 注册表单 -->
@@ -35,7 +38,8 @@
               <input type="password" id="password" v-model="password" placeholder="密码">
             </div>
             <div class="button-group">
-              <button type="submit" class="register-button" :class="{ disabled: isProcessing }" :disabled="isProcessing">注册</button>
+              <button type="submit" class="register-button" :class="{ disabled: isProcessing }"
+                :disabled="isProcessing">注册</button>
             </div>
           </form>
           <!-- 错误消息提示 -->
@@ -136,9 +140,12 @@ const closeLogin = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.3); /* 调浅一点的背景色 */
-  backdrop-filter: blur(10px); /* 添加模糊效果，也可以调整模糊程度 */
-  z-index: 999; /* 确保模糊背景位于其他内容之下 */
+  background-color: rgba(0, 0, 0, 0.3);
+  /* 调浅一点的背景色 */
+  backdrop-filter: blur(10px);
+  /* 添加模糊效果，也可以调整模糊程度 */
+  z-index: 999;
+  /* 确保模糊背景位于其他内容之下 */
 }
 
 /* 确保整个屏幕都被覆盖，并设置中心定位 */
@@ -151,18 +158,23 @@ const closeLogin = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1000; /* 提高 z-index 以确保在模糊背景之上 */
+  z-index: 1000;
+  /* 提高 z-index 以确保在模糊背景之上 */
 }
 
 /* 中心盒子的样式 */
 .center-box {
-  padding: 40px; /* 调大一点 */
+  padding: 40px;
+  /* 调大一点 */
   background-color: white;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  width: 350px; /* 调大一点 */
-  position: relative; /* 为了定位关闭按钮 */
-  z-index: 1001; /* 确保位于 center-screen 和模糊背景之上 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  /* 调大一点 */
+  position: relative;
+  /* 为了定位关闭按钮 */
+  z-index: 1001;
+  /* 确保位于 center-screen 和模糊背景之上 */
 }
 
 /* 关闭按钮样式 */
@@ -181,7 +193,7 @@ const closeLogin = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .close-button:hover {
@@ -193,74 +205,96 @@ const closeLogin = () => {
 }
 
 .form-group {
-  margin-bottom: 30px; /* 增大表单项之间的垂直间距 */
+  margin-bottom: 30px;
+  /* 增大表单项之间的垂直间距 */
 }
 
 /* 登录和注册按钮样式 */
 .login-button,
 .register-button {
-  width: 100%; /* 设置按钮宽度为父容器宽度 */
+  width: 100%;
+  /* 设置按钮宽度为父容器宽度 */
   margin-top: 10px;
-  color: white; /* 设置字体颜色为白色 */
-  font-weight: bold; /* 设置字体加粗 */
-  background-color: #4CAF50; /* 设置按钮初始颜色 */
+  color: white;
+  /* 设置字体颜色为白色 */
+  font-weight: bold;
+  /* 设置字体加粗 */
+  background-color: #4CAF50;
+  /* 设置按钮初始颜色 */
   border: none;
   padding: 10px;
-  border-radius: 20px; /* 将按钮形状修改为两端是圆形 */
+  border-radius: 20px;
+  /* 将按钮形状修改为两端是圆形 */
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 .login-button:hover,
 .register-button:hover {
-  background-color: #308834; /* 设置鼠标悬停时的颜色变深 */
+  background-color: #308834;
+  /* 设置鼠标悬停时的颜色变深 */
 }
 
 .login-button:active,
 .register-button:active {
-  background-color: #09803c; /* 设置鼠标悬停时的颜色变深 */
+  background-color: #09803c;
+  /* 设置鼠标悬停时的颜色变深 */
 }
 
 /* 添加禁用状态下的按钮样式 */
 .tab-buttons button.disabled {
-  background-color: #ccc; /* 禁用时按钮颜色 */
-  cursor: not-allowed; /* 设置禁用时的鼠标样式 */
+  background-color: #ccc;
+  /* 禁用时按钮颜色 */
+  cursor: not-allowed;
+  /* 设置禁用时的鼠标样式 */
 }
 
 .tab-buttons button.disabled:hover {
-  background-color: #ccc; /* 禁用时按钮悬停颜色 */
+  background-color: #ccc;
+  /* 禁用时按钮悬停颜色 */
 }
 
 .login-button.disabled,
 .register-button.disabled {
-  background-color: #ccc; /* 禁用时按钮颜色 */
-  cursor: not-allowed; /* 设置禁用时的鼠标样式 */
+  background-color: #ccc;
+  /* 禁用时按钮颜色 */
+  cursor: not-allowed;
+  /* 设置禁用时的鼠标样式 */
 }
 
 .login-button.disabled:hover,
 .register-button.disabled:hover {
-  background-color: #ccc; /* 禁用时按钮悬停颜色 */
+  background-color: #ccc;
+  /* 禁用时按钮悬停颜色 */
 }
 
 /* 输入框样式 */
 input[type="text"],
 input[type="password"],
 input[type="email"] {
-  width: 100%; /* 设置输入框宽度 */
-  padding: 12px; /* 增加输入框的内边距 */
+  width: 100%;
+  /* 设置输入框宽度 */
+  padding: 12px;
+  /* 增加输入框的内边距 */
   border: 1px solid #ccc;
-  border-radius: 20px; /* 将输入框的两端修改为圆形 */
-  box-sizing: border-box; /* 确保填充和边框包含在元素的总宽度和高度内 */
-  height: 40px; /* 增加输入框的高度 */
+  border-radius: 20px;
+  /* 将输入框的两端修改为圆形 */
+  box-sizing: border-box;
+  /* 确保填充和边框包含在元素的总宽度和高度内 */
+  height: 40px;
+  /* 增加输入框的高度 */
 }
 
 /* 输入框在聚焦时的样式 */
 input[type="text"]:focus,
 input[type="password"]:focus,
 input[type="email"]:focus {
-  outline: none; /* 去掉默认的聚焦边框 */
-  border-color: #4CAF50; /* 聚焦时边框颜色 */
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* 聚焦时的阴影效果 */
+  outline: none;
+  /* 去掉默认的聚焦边框 */
+  border-color: #4CAF50;
+  /* 聚焦时边框颜色 */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+  /* 聚焦时的阴影效果 */
 }
 
 
@@ -270,14 +304,24 @@ h2 {
 }
 
 /* 过渡动画 */
-.slide-enter-active, .slide-leave-active {
-  transition: transform 0.5s ease; /* 设置过渡效果 */
-}
-.slide-enter, .slide-leave-to /* .slide-leave-active 在版本 2.1.8 及以上版本中生效 */ {
-  transform: translateY(100%); /* 初始位置 */
-}
+.slide-enter-active,
 .slide-leave-active {
-  transform: translateY(100%); /* 收回到底部 */
+  transition: transform 0.5s ease;
+  /* 设置过渡效果 */
+}
+
+.slide-enter,
+.slide-leave-to
+
+/* .slide-leave-active 在版本 2.1.8 及以上版本中生效 */
+  {
+  transform: translateY(100%);
+  /* 初始位置 */
+}
+
+.slide-leave-active {
+  transform: translateY(100%);
+  /* 收回到底部 */
 }
 
 /* 选项卡按钮样式 */
@@ -291,11 +335,15 @@ h2 {
   flex: 1;
   padding: 10px;
   border: none;
-  border-right: 1px solid #ccc; /* 添加右边框作为分隔线 */
+  border-right: 1px solid #ccc;
+  /* 添加右边框作为分隔线 */
   cursor: pointer;
-  background-color: transparent; /* 去掉按钮背景颜色 */
-  color: grey; /* 设置字体颜色为灰色 */
-  font-weight: bold; /* 设置字体加粗 */
+  background-color: transparent;
+  /* 去掉按钮背景颜色 */
+  color: grey;
+  /* 设置字体颜色为灰色 */
+  font-weight: bold;
+  /* 设置字体加粗 */
   font-size: 16px;
   transition: color 0.3s;
 }
@@ -304,11 +352,10 @@ h2 {
 .tab-buttons button:last-child {
   border-right: none;
 }
- 
+
 .error-message {
   color: red;
   text-align: center;
   margin-top: 10px;
 }
-
 </style>

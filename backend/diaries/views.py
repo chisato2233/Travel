@@ -6,7 +6,7 @@ from rest_framework import permissions, status
 from .models import DiaryEntry
 from .serializers import DiaryEntrySerializer
 # 假设 huff_compress 和 huff_decompress 位于 compress.py 文件中
-from compress import huff_compress, huff_decompress
+from .compress import huff_compress, huff_decompress
 
 class DiaryCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]  # 确保用户已认证

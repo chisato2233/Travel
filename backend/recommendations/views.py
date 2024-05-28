@@ -4,6 +4,9 @@ from rest_framework.decorators import api_view
 from .models import load_data, create_tfidf_vectorizer, preprocess_data, calculate_tfidf_matrix, calculate_cosine_similarity
 from .serializers import RecommendationSerializer
 
+
+# 首次登陆 随机推荐
+# 记录用户点击的
 @api_view(['GET'])
 def recommend_items(request, item_id):
     data = load_data()

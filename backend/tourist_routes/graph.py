@@ -7,10 +7,12 @@ def load_graph_from_json(file_path):
         data = json.load(f)
     G = json_graph.node_link_graph(data)
     return G
-import networkx as nx
+
+
 import heapq
 
-def dijkstra(G, start, end):
+
+def dijkstra(G, start, end, weight='distance'):
     # 初始化距离字典，所有节点距离无穷大，除了起点为0
     distances = {vertex: float('infinity') for vertex in G.nodes}
     distances[start] = 0
@@ -31,8 +33,8 @@ def dijkstra(G, start, end):
 
         # 遍历当前节点的邻居
         for neighbor in G.neighbors(current_vertex):
-            weight = G.edges[current_vertex, neighbor].get('weight', 1)
-            distance = current_distance + weight
+            weight_value = G.edges[current_vertex, neighbor].get(weight, 1)
+            distance = current_distance + weight_value
             
             # 如果找到更短的路径，则更新距离和前驱节点，然后将邻居节点加入队列
             if distance < distances[neighbor]:
@@ -42,10 +44,39 @@ def dijkstra(G, start, end):
     
     # 回溯前驱节点字典构造最短路径
     path = []
+    total_distance = 0
+    total_time = 0
     current_vertex = end
     while current_vertex is not None:
         path.append(current_vertex)
+        if predecessors[current_vertex] is not None:
+            edge_data = G.edges[predecessors[current_vertex], current_vertex]
+            total_distance += edge_data.get('distance', 0)
+            total_time += edge_data.get('time', 0)
         current_vertex = predecessors[current_vertex]
     path.reverse()
 
-    return path, distances[end]
+    return path, total_distance, total_time
+
+
+
+def multi_point_dijkstra(G, points, weight='distance'):
+    if not points:
+        return [], 0, 0
+
+    total_path = []
+    total_distance = 0
+    total_time = 0
+
+    for i in range(len(points) - 1):
+        start = points[i]
+        end = points[i + 1]
+        path, distance, time = dijkstra(G, start, end, weight)
+        if not total_path:
+            total_path.extend(path)
+        else:
+            total_path.extend(path[1:])
+        total_distance += distance
+        total_time += time
+
+    return total_path, total_distance, total_time

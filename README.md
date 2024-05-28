@@ -52,3 +52,20 @@ Travel/
 ......
 
 ```
+
+# 数据库信息（可以直接和ai说）
+```
+我的景点数据库在数据库中已经存放，表名sheet，表项有：
+id int
+城市 text
+名称 text
+星级 text
+评分 double
+价格 double
+销量 int
+省/市/区 text
+坐标 text
+简介 text
+是否免费 text
+具体地址 text
+```
