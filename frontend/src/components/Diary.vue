@@ -79,6 +79,10 @@ const createDiary = async () => {
       date: newDiary.value.date,
       location: newDiary.value.location,
       userId: userId // 使用当前登录用户的ID
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}` // 在请求头中添加 Authorization
+      }
     });
 
     if (response.status === 201) {
@@ -136,7 +140,16 @@ const updateDiary = async (diaryId, updatedDiary) => {
 // 删除日记的方法
 const deleteDiary = async (diaryId) => {
   try {
-    const response = await axios.delete(`http://localhost:8000/api/diaries/delete/${diaryId}/`);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('用户未登录或登录状态已过期');
+      return;
+    }
+    const response = await axios.delete(`http://localhost:8000/api/diaries/delete/${diaryId}/`, {
+      headers: {
+        'Authorization': `Bearer ${token}` // 在请求头中添加 Authorization
+      }
+    });
     console.log(response.data.message); // 打印成功删除日记的消息
     await fetchDiaries(); // 删除日记后刷新日记列表
   } catch (error) {
