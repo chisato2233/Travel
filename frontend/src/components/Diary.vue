@@ -55,17 +55,17 @@ onMounted(async () => {
 const createDiary = async () => {
   try {
     // 从 localStorage 中获取用户 token
-    const userToken = localStorage.getItem('userToken');
+    const token = localStorage.getItem('token');
 
-    if (!userToken) {
+    if (!token) {
       console.error('用户未登录或登录状态已过期');
       return;
     }
 
     // 获取当前登录用户的信息
-    const userResponse = await axios.get('http://localhost:8000/api/auth/user', {
+    const userResponse = await axios.get('http://localhost:8000/api/users/user', {
       headers: {
-        Authorization: `Bearer ${userToken}` // 使用存储在 localStorage 中的用户 token
+        Authorization: `Bearer ${token}` // 使用存储在 localStorage 中的用户 token
       }
     });
 
@@ -73,12 +73,16 @@ const createDiary = async () => {
     const userId = userResponse.data.id;
 
     // 发送创建日记的请求，包括用户ID
-    const response = await axios.post('http://localhost:8000/api/diaries/', {
+    const response = await axios.post('http://localhost:8000/api/diaries/create/', {
       title: newDiary.value.title,
       content: newDiary.value.content,
       date: newDiary.value.date,
       location: newDiary.value.location,
       userId: userId // 使用当前登录用户的ID
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}` // 在请求头中添加 Authorization
+      }
     });
 
     if (response.status === 201) {
@@ -110,16 +114,16 @@ const createDiary = async () => {
 
 const updateDiary = async (diaryId, updatedDiary) => {
   try {
-    const userToken = localStorage.getItem('userToken');
-    if (!userToken) {
+    const token = localStorage.getItem('token');
+    if (!token) {
       console.error('用户未登录或登录状态已过期');
       return;
     }
 
     // 发送更新日记的请求，包括用户 token 和更新后的日记内容
-    const response = await axios.put(`http://localhost:8000/api/diaries/${diaryId}/`, updatedDiary, {
+    const response = await axios.put(`http://localhost:8000/api/diaries/update/${diaryId}/`, updatedDiary, {
       headers: {
-        Authorization: `Bearer ${userToken}`
+        Authorization: `Bearer ${token}`
       }
     });
 
@@ -136,7 +140,16 @@ const updateDiary = async (diaryId, updatedDiary) => {
 // 删除日记的方法
 const deleteDiary = async (diaryId) => {
   try {
-    const response = await axios.delete(`http://localhost:8000/api/diaries/${diaryId}/delete/`);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('用户未登录或登录状态已过期');
+      return;
+    }
+    const response = await axios.delete(`http://localhost:8000/api/diaries/delete/${diaryId}/`, {
+      headers: {
+        'Authorization': `Bearer ${token}` // 在请求头中添加 Authorization
+      }
+    });
     console.log(response.data.message); // 打印成功删除日记的消息
     await fetchDiaries(); // 删除日记后刷新日记列表
   } catch (error) {
@@ -145,14 +158,35 @@ const deleteDiary = async (diaryId) => {
 };
 
 // 获取用户日记列表的方法
+// 获取用户日记列表的方法
 const fetchDiaries = async () => {
+  const token = localStorage.getItem('token'); // 从 localStorage 获取 token
+  if (!token) {
+    console.error('Token not found');
+    return;
+  }
+  console.log('Using token:', token);
   try {
-    const response = await axios.get('http://localhost:8000/api/diaries/my-diaries/');
+    const response = await axios.get('http://localhost:8000/api/diaries/my-diaries/', {
+      headers: {
+        'Authorization': `Bearer ${token}` // 在请求头中添加 Authorization
+      }
+    });
     diaries.value = response.data; // 将获取到的日记列表存储到 diaries 变量中
   } catch (error) {
-    console.error('获取用户日记失败：', error);
-  }
-};
+    if (error.response && error.response.status === 401) {
+      // 访问令牌无效或过期，提示用户重新登录
+      console.error('访问令牌无效或过期，请重新登录。');
+      localStorage.removeItem('token'); // 清除存储的令牌
+      // 重定向到登录页面或者显示登录对话框
+      router.push('Login/')
+    } else {
+      console.error('获取用户日记失败：', error);
+    }
+  };
+}
+
+
 </script>
 
 <style scoped>

@@ -1,24 +1,21 @@
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from .models import DiaryEntry
 from .serializers import DiaryEntrySerializer
-# 假设 huff_compress 和 huff_decompress 位于 compress.py 文件中
-from .compress import huff_compress, huff_decompress
 
 class DiaryCreate(APIView):
-    permission_classes = [permissions.IsAuthenticated]  # 确保用户已认证
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        serializer = DiaryEntrySerializer(data=request.data)
+        serializer = DiaryEntrySerializer(data=request.data, context={'request': request})
         
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            diary_entry = serializer.save(user=request.user)
             return Response({
                 "message": "Diary created successfully.",
-                "diary": serializer.data
+                "diary": DiaryEntrySerializer(diary_entry, context={'request': request}).data
             }, status=status.HTTP_201_CREATED)
         
         return Response({
@@ -30,8 +27,8 @@ class UserDiaries(APIView):
 
     def get(self, request, *args, **kwargs):
         user_diaries = DiaryEntry.objects.filter(user=request.user)
-        serializer = DiaryEntrySerializer(user_diaries, many=True)
-        return Response(serializer.data)
+        serialized_diaries = [DiaryEntrySerializer(diary, context={'request': request}).data for diary in user_diaries]
+        return Response(serialized_diaries, status=status.HTTP_200_OK)
 
 class DiaryUpdate(APIView):
     permission_classes = [permissions.IsAuthenticated]
