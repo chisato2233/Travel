@@ -14,12 +14,14 @@
     "@fortawesome/fontawesome-free": "^6.5.2",
     "@vue/runtime-dom": "^3.4.27",
     "axios": "^1.6.8",
+    "jwt-decode": "^4.0.0",
     "vue": "^3.4.27",
     "vue-router": "^4.3.0",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.2",
+    "@types/jwt-decode": "^3.1.0",
     "@types/node": "^20.11.25",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/tsconfig": "^0.5.1",

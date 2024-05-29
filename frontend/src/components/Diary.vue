@@ -17,6 +17,7 @@
           <button @click="updateDiary(diary)" class="btn-update">
             <i class="fas fa-pencil-alt"></i> 更新日记
           </button>
+
           <!-- 删除日记按钮 -->
           <button @click="deleteDiary(diary.id)" class="btn-delete">删除日记</button>
         </li>
@@ -150,6 +151,7 @@ const deleteDiary = async (diaryId) => {
   padding: 5px 10px;
   border: none;
   border-radius: 5px;
+
   background-color: #25dc44; /* 蓝色背景 */
   color: #fff; /* 白色字体 */
   cursor: pointer;

@@ -20,8 +20,9 @@ def generate_graph(num_nodes):
     random.shuffle(nodes)
     
     for i in range(len(nodes) - 1):
-        distance = random.randint(1, 100)
-        time = random.randint(1, 10)
+        distance = random.randint(1, 100)  # 以公里为单位
+        speed = random.uniform(50, 100)  # 速度范围在50到100公里/小时之间
+        time = round(distance / speed * 60)  # 以分钟为单位
         graph["links"].append({
             "source": nodes[i],
             "target": nodes[i + 1],
@@ -36,7 +37,8 @@ def generate_graph(num_nodes):
         target = random.choice(nodes)
         if source != target and not any(link for link in graph["links"] if (link["source"] == source and link["target"] == target) or (link["source"] == target and link["target"] == source)):
             distance = random.randint(1, 100)
-            time = random.randint(1, 10)
+            speed = random.uniform(50, 100)
+            time = round(distance / speed * 60)
             graph["links"].append({
                 "source": source,
                 "target": target,
