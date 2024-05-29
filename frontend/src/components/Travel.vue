@@ -35,6 +35,11 @@
     </button>
 
     <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+    
+  </div>
+
+  <div class="image-container ">
+      <img v-if="!isSearching && !showGraph" src="@/components/graph_visualization.png" alt="Graph Visualization" class="graph-image">
   </div>
   
   <!-- 导航栏组件 -->
@@ -44,7 +49,7 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
-import Navbar from './Navbar.vue'; // 导入导航栏组件
+import Navbar from './Navbar.vue';
 
 const startLocation = ref('');
 const endLocation = ref('');
@@ -54,6 +59,7 @@ const strategy = ref('shortest');
 const routeType = ref('single');
 const errorMessage = ref('');
 const isSearching = ref(false); // 控制查询状态
+const showGraph = ref(false); // 控制是否显示图片
 
 const searchRoute = async () => {
   try {
@@ -78,6 +84,7 @@ const searchRoute = async () => {
     const data = response.data;
     console.log('最优路线:', data);
     // 在这里处理获取最优路线成功后的逻辑，例如显示路线信息等
+    showGraph.value = true; // 查询成功，显示图片
   } catch (error) {
     console.error('查询失败:', error);
     if (error.response && error.response.status === 400) {
@@ -99,10 +106,7 @@ const inputFocus = () => {
 .travel-container {
   width: 400px;
   margin: auto;
-}
-
-h2 {
-  text-align: center;
+  padding: 20px;
 }
 
 .form-group {
@@ -144,12 +148,17 @@ h2 {
   margin-top: 10px;
 }
 
-.travel-container {
-  width: 400px;
-  margin: 50px auto; /* 50px 的顶部边距，水平居中 */
-  padding: 50px; /* 添加内边距，使内容与盒子模型边缘有一定距离 */
-  /* border: 1px solid #ccc; 添加边框 */
-  border-radius: 10px; /* 圆角边框 */
+.image-container {
+  width: 100vw; /* 设置容器宽度为视窗宽度 */
+  text-align: center; /*图片居中显示 */
+  margin: 20px auto;
+}
+
+.graph-image {
+  display: inline-block; /* 设置图片为内联块级元素，使得水平居中显示 */
+  max-width: 100%; /* 设置最大宽度为容器宽度 */
+  height: auto; /* 根据宽度等比例缩放高度 */
+  max-height: 2000px; /* 设置最大高度 */
 }
 
 </style>
