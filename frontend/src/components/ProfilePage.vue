@@ -140,6 +140,9 @@ function getRefreshToken() {
   max-width: 800px;
   margin: auto;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .user-info {
