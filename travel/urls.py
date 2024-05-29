@@ -22,4 +22,5 @@ urlpatterns = [
     path('api/users/', include('backend.authentication.urls')),
     path('api/routes/',include('backend.tourist_routes.urls')),
     path('api/diaries/',include('backend.diaries.urls')),
+    path('api/search/',include('backend.search.urls')),
 ]

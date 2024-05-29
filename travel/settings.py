@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'backend',
     'backend.authentication',
     'backend.diaries',
     'backend.recommendations',
