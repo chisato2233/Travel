@@ -16,3 +16,15 @@ class Attraction(models.Model):
 
     class Meta:
         db_table = 'sheet'
+        managed = False  # 告诉 Django 不要管理该表
+
+
+
+from django.db import models
+
+class HuffmanCode(models.Model):
+    char = models.CharField(max_length=1, unique=True)
+    code = models.TextField()
+
+    def __str__(self):
+        return f'{self.char}: {self.code}'

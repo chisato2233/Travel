@@ -31,7 +31,6 @@ const id = router.currentRoute.value.params.id; // 接收id参数
 
 
 const updatedDiary = ref({
-  id: diaryData.id,
   title: diaryData.title,
   content: diaryData.content,
   date: diaryData.date,
@@ -49,7 +48,7 @@ const updateDiary = async () => {
       return;
     }
   
-    const response = await axios.put(`http://localhost:8000/api/diaries/update/${updatedDiary.value.id}`, {
+    const response = await axios.put(`http://localhost:8000/api/diaries/update/${id}/`, {
       title: updatedDiary.value.title,
       content: updatedDiary.value.content,
       date: updatedDiary.value.date,
