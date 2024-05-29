@@ -32,6 +32,8 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import Navbar from './Navbar.vue';
+// 导入路由实例
+import router from '../router/index';
 
 const userInfo = ref(null);
 const newEmail = ref('');
@@ -42,7 +44,7 @@ const showErrorAndRedirectToLogin = (errorMessage) => {
   error.value = errorMessage;
   if (errorMessage === 'Token无效或已过期') {
     // 使用编程式导航将用户导航到Login.vue界面
-    router.push('/login');
+    router.push({ name: 'Login' });
   }
 };
 
@@ -67,6 +69,7 @@ const fetchUserInfo = async () => {
     if (error.response && error.response.status === 401) {
       showError('Token无效或已过期');
       showErrorAndRedirectToLogin('Token无效或已过期');
+      router.push('Login/');
     } else {
       showError('获取用户信息失败: ' + error.message);
     }
@@ -106,17 +109,22 @@ const logout = async () => {
           Authorization: `Bearer ${token}`
         }
       });
-      console.log(response.data.message);
-      localStorage.removeItem('token');  // 清除 token
-      localStorage.removeItem('refreshToken');  // 清除 refresh token
-      isUserLoggedIn.value = false;
-      window.location.href = '/login';
+      if (response.status === 200) {
+        console.log(response.data.message);
+        localStorage.removeItem('token');  // 清除 token
+        localStorage.removeItem('refreshToken');  // 清除 refresh token
+        isUserLoggedIn.value = false;
+        router.push('/login'); // 跳转到登陆界面
+      } else {
+        showError('注销失败: ' + response.data.error);
+      }
     }
   } catch (error) {
     console.error('注销失败:', error);
     showError('注销失败: ' + error.message);
   }
 };
+
 
 const showError = (errorMessage) => {
   error.value = errorMessage;
@@ -181,7 +189,19 @@ button {
   transition: background-color 0.3s ease; /* Smooth transition on hover */
 }
 
-button:hover {
+.logout-button{
+  width: 250px;
+  padding: 8px 16px;
+  background-color: #4fea51; /* Blue color for buttons */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+button:hover, .logout-button:hover {
   background-color: #22bd07; /* Darker blue color on hover */
 }
 
