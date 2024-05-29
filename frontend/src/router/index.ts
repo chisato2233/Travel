@@ -5,6 +5,8 @@ import Register from '../components/Register.vue';
 import HomePage from '../components/HomePage.vue';
 import Travel from '../components/Travel.vue';
 import Diary from '../components/Diary.vue';
+import CreateDiary from '../components/CreateDiary.vue'; // 引入CreateDiary组件
+import UpdateDiary from '../components/UpdateDiary.vue'; // 引入UpdateDiary组件
 
 const routes = [
   {
@@ -37,6 +39,16 @@ const routes = [
     name: 'Diary',
     component: Diary,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/create-diary', // 设置CreateDiary.vue的路由路径
+    name: 'CreateDiary',
+    component: CreateDiary
+  },
+  {
+    path: '/update-diary/:id', // 修改路由路径，接收日记ID作为参数
+    name: 'UpdateDiary',
+    component: UpdateDiary
   }
 ];
 

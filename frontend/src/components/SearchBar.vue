@@ -30,12 +30,12 @@
       <input type="date" v-model="endDate" placeholder="结束日期" class="input-text">
     </div>
 
-    <button @click="handleSearch" class="search-button">搜索</button>
+    <button @click="handleSearch" class="search-button" :disabled="isSearchButtonDisabled">搜索</button>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const query = ref('');
 const isFocused = ref(false);
@@ -90,6 +90,13 @@ const handleSearch = () => {
 const handleTypeChange = () => {
   emit('updateSearchType', selectedType.value);
 };
+
+// 计算属性：检查是否禁用搜索按钮
+const isSearchButtonDisabled = computed(() => {
+  // 判断是否所有输入框都为空，若有任何一个输入框不为空，则返回false，否则返回true
+  return !(query.value || category.value || keywords.value || rating.value || popularity.value ||
+           locationId.value || type.value || radius.value || userId.value || diaryKeywords.value || startDate.value || endDate.value);
+});
 </script>
 
 <style scoped>
