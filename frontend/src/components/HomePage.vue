@@ -13,6 +13,9 @@
     <!-- 登录组件 -->
     <Login v-if="!isLoggedIn && showLogin" @close="handleLoginClose" />
 
+    <!-- 显示搜索失败消息 -->
+    <p v-if="searchError" class="error-message">{{ searchError }}</p>
+
     <Navbar />
   </div>
 </template>
@@ -34,6 +37,7 @@ const token = localStorage.getItem('token');
 
 const searchType = ref('attractions'); // 初始搜索类型
 const searchParams = ref({}); // 搜索参数
+const searchError = ref(''); // 搜索失败消息
 
 const performSearch = async (query) => {
   try {
@@ -48,9 +52,12 @@ const performSearch = async (query) => {
       response = await axios.get('http://localhost:8000/api/search/diaries/', { params: { ...searchParams.value, keywords: query } });
       searchResults.value = response.data.diaries;
     }
+    // 搜索成功时清除搜索失败消息
+    searchError.value = '';
   } catch (error) {
     console.error('搜索失败:', error);
-    // 在此处添加用户反馈，如错误提示
+    // 显示搜索失败消息
+    searchError.value = '搜索失败，请稍后重试。';
   }
 };
 
@@ -105,5 +112,11 @@ const updateSearchParams = (params) => {
   justify-content: center;
   margin-bottom: 20px;
   /* 添加间距 */
+}
+
+.error-message {
+  color: #ff4d4f; /* 红色用于错误消息 */
+  margin-top: 10px; /* 添加一些顶部间距 */
+  text-align: center;
 }
 </style>

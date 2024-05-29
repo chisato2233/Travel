@@ -67,7 +67,7 @@ const globalMapUrl = ref(''); // 全局地图图片的 URL
 
 const fetchGlobalMap = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/tourist_routes/global_map');
+    const response = await axios.get('http://localhost:8000/api/routes/global_map');
     globalMapUrl.value = response.data.image_url;
   } catch (error) {
     console.error('获取全局地图失败:', error);
@@ -101,7 +101,7 @@ const searchRoute = async () => {
     steps.value = data.steps;
 
     // 获取路径图片
-    const routeImageResponse = await axios.post('http://localhost:8000/api/tourist_routes/routes_image', {
+    const routeImageResponse = await axios.post('http://localhost:8000/api/routes/routes_image', {
       route: data.route
     });
 

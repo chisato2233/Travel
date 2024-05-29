@@ -14,7 +14,9 @@
           <p>日期: {{ diary.date }}</p>
           <p>地点: {{ diary.location }}</p>
           <!-- 更新日记按钮 -->
-          <button @click="updateDiary(diary)" class="btn-update">更新日记</button>
+          <button @click="updateDiary(diary)" class="btn-update">
+            <i class="fas fa-pencil-alt"></i> 更新日记
+          </button>
           <!-- 删除日记按钮 -->
           <button @click="deleteDiary(diary.id)" class="btn-delete">删除日记</button>
         </li>
@@ -72,8 +74,14 @@ const sortedDiaries = computed(() => {
 
 // 更新日记
 const updateDiary = (diary) => {
-  // 导航到更新界面，并将当前选中的日记内容传递给 UpdateDiary.vue
-  router.push({ name: 'UpdateDiary', params: { diaryData: diary } });
+  // 导航到UpdateDiary路由时，传递diaryData和id参数
+  router.push({ 
+    name: 'UpdateDiary', 
+    params: { 
+      diaryData: diary, 
+      id: diary.id // 传递id参数
+    } 
+  });
 }
 
 // 删除日记
@@ -135,13 +143,14 @@ const deleteDiary = async (diaryId) => {
   border: none;
   cursor: pointer;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  text-align: center;
 }
 
 .btn-update {
   padding: 5px 10px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff; /* 蓝色背景 */
+  background-color: #25dc44; /* 蓝色背景 */
   color: #fff; /* 白色字体 */
   cursor: pointer;
   font-size: 14px;
