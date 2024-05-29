@@ -7,17 +7,27 @@ from django.conf import settings  # 使用Django的设置模块来管理图文�
 # 假设这些函数在 graph_utils.py 中定义
 from .graph import load_graph_from_json, dijkstra,multi_point_dijkstra
 
+import json
+import networkx as nx
+import matplotlib.pyplot as plt
+from networkx.readwrite import json_graph
+from django.http import JsonResponse
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views import View
+from PIL import Image, ImageDraw
+import os
 
 
 class OptimalRouteView(APIView):
-    # 加载图数据一次，并存储在类变量中以供所有请求使用
     graph = load_graph_from_json("backend/tourist_routes/data/graph.json")
+
     def post(self, request, *args, **kwargs):
         start_location = request.data.get("startLocation")
         end_location = request.data.get("endLocation")
         strategy = request.data.get("strategy")
 
-        # 检查节点是否存在于图中
         if not self.graph.has_node(start_location) or not self.graph.has_node(end_location):
             return Response({"error": "Start or end location does not exist in the graph."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -30,25 +40,29 @@ class OptimalRouteView(APIView):
             else:
                 path, total_distance, total_time = dijkstra(self.graph, start_location, end_location, weight='time')
 
+            steps = [
+                {"from": path[i], "to": path[i + 1], "time": self.graph[path[i]][path[i + 1]]['time'], "distance": self.graph[path[i]][path[i + 1]]['distance']}
+                for i in range(len(path) - 1)
+            ]
+
             return Response({
                 "route": path,
                 "distance": total_distance,
-                "time": total_time
+                "time": total_time,
+                "steps": steps
             }, status=status.HTTP_200_OK)
         except nx.NetworkXNoPath:
             return Response({"error": "No path between start and end locations."}, status=status.HTTP_400_BAD_REQUEST)
-        
 
 class MultiDestinationRouteView(APIView):
-    # 加载图数据一次，并存储在类变量中以供所有请求使用
     graph = load_graph_from_json("backend/tourist_routes/data/graph.json")
+
     def post(self, request, *args, **kwargs):
         start_location = request.data.get("startLocation")
         end_location = request.data.get("endLocation")
         via_points = request.data.get("viaPoints", [])
         strategy = request.data.get("strategy")
 
-        # 检查节点是否存在于图中
         for location in [start_location, end_location] + via_points:
             if not self.graph.has_node(location):
                 return Response({"error": f"Location {location} does not exist in the graph."}, status=status.HTTP_400_BAD_REQUEST)
@@ -63,10 +77,94 @@ class MultiDestinationRouteView(APIView):
             else:
                 path, total_distance, total_time = multi_point_dijkstra(self.graph, points, weight='time')
 
+            steps = [
+                {"from": path[i], "to": path[i + 1], "time": self.graph[path[i]][path[i + 1]]['time'], "distance": self.graph[path[i]][path[i + 1]]['distance']}
+                for i in range(len(path) - 1)
+            ]
+
             return Response({
                 "route": path,
                 "distance": total_distance,
-                "time": total_time
+                "time": total_time,
+                "steps": steps
             }, status=status.HTTP_200_OK)
         except nx.NetworkXNoPath:
             return Response({"error": "No path between specified locations."}, status=status.HTTP_400_BAD_REQUEST)
+# views.py
+
+from django.http import JsonResponse
+from django.conf import settings
+
+def get_global_map(request):
+    image_url = f"{settings.MEDIA_URL}tourist_routes/graph_visualization.png"
+    return JsonResponse({"image_url": request.build_absolute_uri(image_url)})
+
+
+
+
+
+
+
+def load_graph_from_json(file_path):
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    G = json_graph.node_link_graph(data)
+    return G
+
+def draw_graph(G, file_path):
+    pos = nx.spring_layout(G)
+    plt.figure(figsize=(20, 20), dpi=300)
+    
+    # 绘制原图
+    nx.draw_networkx_nodes(G, pos, node_size=10, node_color='blue')
+    nx.draw_networkx_edges(G, pos, edgelist=G.edges(), edge_color='gray')
+    nx.draw_networkx_labels(G, pos, font_size=5, font_color='black')
+    
+    plt.title('Graph Visualization')
+    plt.savefig(file_path, format="PNG")
+    plt.close()
+
+def draw_route_on_graph(G, route, file_path):
+    pos = nx.spring_layout(G)
+    plt.figure(figsize=(20, 20), dpi=300)
+
+    # 仅绘制路径和所用节点
+    route_nodes = set(route)
+    path_edges = list(zip(route, route[1:]))
+    
+    # 绘制路径上的节点
+    nx.draw_networkx_nodes(G, pos, nodelist=route_nodes, node_size=10, node_color='red')
+    
+    # 绘制路径
+    nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color='red', width=2)
+    
+    # 绘制路径上的节点标签
+    nx.draw_networkx_labels(G, pos, labels={node: node for node in route_nodes}, font_size=5, font_color='black')
+    
+    plt.title('Graph Visualization with Route')
+    plt.savefig(file_path, format="PNG")
+    plt.close()
+
+@method_decorator(csrf_exempt, name='dispatch')
+class RoutesImageView(View):
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            route = data.get("route", [])
+
+            graph_json_path = os.path.join(settings.BASE_DIR, "graph.json")  # 确保graph.json存在于项目根目录
+            original_image_output_path = os.path.join(settings.MEDIA_ROOT, "tourist_routes", "graph_visualization.png")
+            route_image_output_path = os.path.join(settings.MEDIA_ROOT, "tourist_routes", "route_image.png")
+
+            G = load_graph_from_json(graph_json_path)
+            
+            # 生成并保存整体图像
+            draw_graph(G, original_image_output_path)
+            
+            # 生成并保存包含路径的图像
+            draw_route_on_graph(G, route, route_image_output_path)
+
+            image_url = request.build_absolute_uri(settings.MEDIA_URL + "tourist_routes/route_image.png")
+            return JsonResponse({"image_url": image_url}, status=200)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
