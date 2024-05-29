@@ -112,24 +112,8 @@ const closeLogin = () => {
   showRegister.value = false;
   router.push({ name: 'HomePage' });
 };
-
-// async function isLoggedIn() {
-//   try {
-//     const response = await axios.get('http://localhost:8000/api/users/user/', {
-//       headers: {
-//         Authorization: `Bearer ${localStorage.getItem('token')}`
-//       }
-//     });
-//     if (response.status === 200) {
-//       console.log('用户已登录');
-//       return true;
-//     }
-//   } catch (error) {
-//     console.error('用户未登录:', error);
-//     return false;
-//   }
-// }
-// </script>
+ 
+</script>
 
 
 <style scoped>
