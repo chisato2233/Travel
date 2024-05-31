@@ -1,11 +1,8 @@
 <template>
   <div class="home-page">
-    <RecommendationList :destinations="recommendedDestinations" />
-
     <!-- 居中放置的搜索框和按钮 -->
     <div class="search-container">
-      <SearchBar @search="performSearch" @updateSearchType="updateSearchType"
-        @updateSearchParams="updateSearchParams" />
+      <SearchBar @search="performSearch" @updateSearchType="updateSearchType" @updateSearchParams="updateSearchParams" />
     </div>
 
     <SearchResults :results="searchResults" />
@@ -22,12 +19,14 @@
 
 <script setup>
 import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
-import RecommendationList from './RecommendationList.vue';
 import SearchBar from './SearchBar.vue';
 import SearchResults from './SearchResults.vue';
 import Navbar from './Navbar.vue';
 import Login from './Login.vue';
+
+const router = useRouter();
 
 const recommendedDestinations = ref([]);
 const searchResults = ref([]);
@@ -56,8 +55,12 @@ const performSearch = async (query) => {
     searchError.value = '';
   } catch (error) {
     console.error('搜索失败:', error);
-    // 显示搜索失败消息
-    searchError.value = '搜索失败，请稍后重试。';
+    if (error.response && error.response.status === 404) {
+      router.push({ name: 'NotFound' });
+    } else {
+      // 显示搜索失败消息
+      searchError.value = '搜索失败，请稍后重试。';
+    }
   }
 };
 

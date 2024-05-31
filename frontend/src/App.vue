@@ -11,7 +11,7 @@ import { useRouter } from 'vue-router';
 // 在页面加载后导航到HomePage组件
 onMounted(() => {
   const router = useRouter();
-  router.push({ name: 'HomePage' });
+  router.push({ name: 'Recommendations' });
 });
 </script>
 
