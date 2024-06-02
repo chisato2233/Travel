@@ -1,0 +1,42 @@
+# recommendations/views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import UserSearchHistory
+from .utils import recommend_attractions
+from backend.models import Attraction
+import random
+
+class DestinationRecommendationView(APIView):
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return Response({"error": "Unauthorized access."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        search_history = UserSearchHistory.objects.filter(user=request.user).order_by('-search_time')
+
+        unique_attractions = list(set([entry.attraction for entry in search_history]))
+        random_history_samples = random.sample(unique_attractions, min(5, len(unique_attractions)))
+
+        recommendations = []
+        if random_history_samples:
+            for attraction in random_history_samples:
+                recommendations.extend(recommend_attractions(attraction.id))
+        
+        recommendations = list({rec.id: rec for rec in recommendations}.values())
+        if len(recommendations) < 10:
+            additional_attractions = Attraction.objects.exclude(id__in=[rec.id for rec in recommendations]).order_by('?')[:10 - len(recommendations)]
+            recommendations.extend(additional_attractions)
+        else:
+            recommendations = random.sample(recommendations, 10)
+
+        results = []
+        for attraction in recommendations:
+            results.append({
+                "id": attraction.id,
+                "name": attraction.name,
+                "description": attraction.description,
+                "rating": attraction.rating,
+                "popularity": attraction.popularity.view_count if hasattr(attraction, 'popularity') else 0,
+            })
+
+        return Response(results, status=status.HTTP_200_OK)

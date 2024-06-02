@@ -3,14 +3,22 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from backend.models import Attraction;
-from backend.recommendations.models import AttractionPopularity
+from backend.recommendations.models import AttractionPopularity,UserSearchHistory
 from django.db.models import Q
 from backend.diaries.models import DiaryEntry
 from backend.diaries.serializers import DiaryEntrySerializer
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
 import random
+from django.db.models import F
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
+
 class AttractionSearchView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         name = request.GET.get('name', None)
         category = request.GET.get('category', None)
@@ -34,10 +42,24 @@ class AttractionSearchView(APIView):
                     continue
                 if popularity and attraction.sales < int(popularity):
                     continue
+
+                try:
+                    attraction_popularity, created = AttractionPopularity.objects.get_or_create(
+                        attraction=attraction,
+                        defaults={'view_count': random.randint(1, 100)}
+                    )
+                    if not created:
+                        attraction_popularity.view_count = F('view_count') + 1
+                        attraction_popularity.save()
+                except ValueError as e:
+                    print(f"Error creating/updating AttractionPopularity: {e}")
+                    return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
                 results.append({
                     "id": attraction.id,
                     "name": attraction.name,
-                    "category": attraction.category,
+                    "category": {},
                     "rating": attraction.rating,
                     "popularity": attraction.sales,
                     "description": attraction.description,
@@ -46,12 +68,9 @@ class AttractionSearchView(APIView):
                     "images": []  # 假设你有一张存储图片链接的表
                 })
 
-                # 更新浏览量
-                if hasattr(attraction, 'popularity'):
-                    attraction.popularity.view_count += 1
-                    attraction.popularity.save()
-                else:
-                    AttractionPopularity.objects.create(attraction=attraction, view_count=random.randint(0, 100) + 1)
+        
+                # 记录搜索历史
+                UserSearchHistory.objects.create(user=request.user, attraction=attraction)
 
         if not results:
             return Response({"error": "No attractions found matching the criteria."}, status=status.HTTP_404_NOT_FOUND)

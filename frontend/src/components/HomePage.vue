@@ -42,13 +42,22 @@ const performSearch = async (query) => {
   try {
     let response;
     if (searchType.value === 'attractions') {
-      response = await axios.get('http://localhost:8000/api/search/attractions/', { params: { ...searchParams.value, name: query } });
+      response = await axios.get('http://localhost:8000/api/search/attractions/', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }, params: { ...searchParams.value, name: query } });
       searchResults.value = response.data.attractions;
     } else if (searchType.value === 'facilities') {
-      response = await axios.get('http://localhost:8000/api/search/facilities/', { params: { ...searchParams.value } });
+      response = await axios.get('http://localhost:8000/api/search/facilities/', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }, params: { ...searchParams.value } });
       searchResults.value = response.data.facilities;
     } else if (searchType.value === 'diaries') {
-      response = await axios.get('http://localhost:8000/api/search/diaries/', { params: { ...searchParams.value, keywords: query } });
+      response = await axios.get('http://localhost:8000/api/search/diaries/', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }, params: { ...searchParams.value, keywords: query } });
       searchResults.value = response.data.diaries;
     }
     // 搜索成功时清除搜索失败消息
