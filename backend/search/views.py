@@ -2,13 +2,14 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from backend.models import Attraction;
+from backend.recommendations.models import AttractionPopularity
 from django.db.models import Q
-from backend.models import Attraction
 from backend.diaries.models import DiaryEntry
 from backend.diaries.serializers import DiaryEntrySerializer
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
-
+import random
 class AttractionSearchView(APIView):
     def get(self, request, *args, **kwargs):
         name = request.GET.get('name', None)
@@ -41,12 +42,16 @@ class AttractionSearchView(APIView):
                     "popularity": attraction.sales,
                     "description": attraction.description,
                     "location": attraction.province_city_district,
-                    "view_count": attraction.view_count,
+                    "view_count": attraction.popularity.view_count if hasattr(attraction, 'popularity') else 0,
                     "images": []  # 假设你有一张存储图片链接的表
                 })
 
-                attraction.view_count += 1
-                attraction.save()
+                # 更新浏览量
+                if hasattr(attraction, 'popularity'):
+                    attraction.popularity.view_count += 1
+                    attraction.popularity.save()
+                else:
+                    AttractionPopularity.objects.create(attraction=attraction, view_count=random.randint(0, 100) + 1)
 
         if not results:
             return Response({"error": "No attractions found matching the criteria."}, status=status.HTTP_404_NOT_FOUND)
