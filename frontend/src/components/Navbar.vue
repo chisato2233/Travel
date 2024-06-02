@@ -6,7 +6,7 @@
 
 <template>
   <div class="navbar">
-    <router-link to="/" class="nav-item">首页</router-link>
+    <router-link to="/recommendations" class="nav-item">首页</router-link>
     <router-link to="/travel" class="nav-item">寻路</router-link>
     <router-link :to="diaryLink" class="nav-item">日记</router-link>
     <router-link :to="profileLink" class="nav-item">我的</router-link>

@@ -1,9 +1,4 @@
 <template>
-  <div>
-    <!-- 全局地图图片 -->
-    <img v-if="globalMapUrl" :src="globalMapUrl" alt="全局地图" class="global-map">
-  </div>
-
   <div class="travel-container">
     <div class="form-group">
       <select id="routeType" v-model="routeType" class="rounded-input">
@@ -41,15 +36,25 @@
 
     <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
   </div>
+
+  <div>
+    <!-- 全局地图图片 -->
+    <img v-if="globalMapUrl" :src="globalMapUrl" alt="全局地图" class="global-map">
+    <!-- 路径图片 -->
+    <img v-if="routeImageUrl" :src="routeImageUrl" alt="路径图片" class="route-map">
+    <!-- 调试信息 -->
+    <pre v-if="routeImageUrl">路径图片 URL: {{ routeImageUrl }}</pre>
+  </div>
   
   <!-- 导航栏组件 -->
   <Navbar />
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import axios from 'axios';
 import Navbar from './Navbar.vue'; // 导入导航栏组件
+import globalMapImage from './graph_visualization.png'; // 导入本地全局地图图片
 
 const startLocation = ref('');
 const endLocation = ref('');
@@ -63,17 +68,8 @@ const route = ref([]);
 const distance = ref(0);
 const time = ref(0);
 const steps = ref([]);
-const globalMapUrl = ref(''); // 全局地图图片的 URL
-
-const fetchGlobalMap = async () => {
-  try {
-    const response = await axios.get('http://localhost:8000/api/routes/global_map/');
-
-    globalMapUrl.value = response.data.image_url;
-  } catch (error) {
-    console.error('获取全局地图失败:', error);
-  }
-};
+const globalMapUrl = ref(globalMapImage); // 直接从本地获取全局地图图片
+const routeImageUrl = ref(''); // 路径图片的 URL
 
 const searchRoute = async () => {
   try {
@@ -103,11 +99,11 @@ const searchRoute = async () => {
 
     // 获取路径图片
     const routeImageResponse = await axios.post('http://localhost:8000/api/routes/routes_image/', {
-
       route: data.route
     });
 
-    globalMapUrl.value = routeImageResponse.data.image_url; // 更新全局地图图片的 URL
+    routeImageUrl.value = routeImageResponse.data.image_url; // 更新路径图片的 URL
+    console.log('路径图片 URL:', routeImageUrl.value); // 调试信息
   } catch (error) {
     console.error('查询失败:', error);
     if (error.response && error.response.status === 400) {
@@ -123,10 +119,6 @@ const searchRoute = async () => {
 const inputFocus = () => {
   errorMessage.value = ''; // 清除错误消息
 };
-
-onMounted(() => {
-  fetchGlobalMap(); // 在页面加载时获取全局地图图片
-});
 </script>
 
 <style scoped>
@@ -187,12 +179,20 @@ h2 {
 }
 
 /* 全局地图样式 */
-.global-map
-{
+.global-map {
   width: 100%;
-  max-width: 600px; /* 设置最大宽度以防止图片过大 */
+  max-width: 2000px; /* 设置最大宽度以防止图片过大 */
   display: block; /* 让图片居中显示 */
   margin: auto;
   margin-bottom: 20px; /* 添加底部边距 */
+}
+
+/* 路径图片样式 */
+.route-map {
+  width: 100%;
+  max-width: 2000px; /* 设置最大宽度以防止图片过大 */
+  display: block; /* 让图片居中显示 */
+  margin: auto;
+  margin-bottom: 20px; /* 添加底部边距 */    
 }
 </style>

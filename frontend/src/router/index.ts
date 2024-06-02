@@ -7,12 +7,24 @@ import Travel from '../components/Travel.vue';
 import Diary from '../components/Diary.vue';
 import CreateDiary from '../components/CreateDiary.vue'; // 引入CreateDiary组件
 import UpdateDiary from '../components/UpdateDiary.vue'; // 引入UpdateDiary组件
+import Recommendations from '../components/Recommendations.vue';
+import NotFound from '../components/NotFound.vue';
 
 const routes = [
   {
     path: '/',
     name: 'HomePage',
     component: HomePage
+  },
+  {
+    path: '/notfound',
+    name: 'NotFound',
+    component: NotFound
+  },
+  {
+    path: '/recommendations',
+    name: 'Recommendations',
+    component: Recommendations
   },
   {
     path: '/register',
