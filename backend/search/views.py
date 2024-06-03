@@ -107,3 +107,76 @@ def search_diaries(request):
         })
 
     return JsonResponse({'diaries': results}, safe=False)
+
+
+import json
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+class FacilitySearch(APIView):
+    def get(self, request, *args, **kwargs):
+        # 读取 node_names.json 文件中的数据
+        with open('node_names.json', 'r') as file:
+            node_names = json.load(file)
+        
+        # 获取查询参数
+        name = request.GET.get('name')
+        facility_type = request.GET.get('type')
+        
+        # 过滤结果
+        filtered_names = []
+        for node in node_names:
+            if name and name.lower() not in node.lower():
+                continue
+            if facility_type and not node.startswith(facility_type):
+                continue
+            filtered_names.append(node)
+        
+        return Response(filtered_names, status=status.HTTP_200_OK)
+    
+
+
+
+import json
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.conf import settings
+import networkx as nx
+from backend.tourist_routes.graph import load_graph_from_json,dijkstra
+class NearbyFacilitySearch(APIView):
+    def get(self, request, *args, **kwargs):
+        # 读取 node_names.json 文件中的数据
+        with open(settings.BASE_DIR / 'node_names.json', 'r') as file:
+            node_names = json.load(file)
+
+        # 读取图数据
+        graph = load_graph_from_json(settings.BASE_DIR / 'graph.json')
+
+        # 获取查询参数
+        facility_type = request.GET.get('type')
+        location = request.GET.get('location')
+        radius = request.GET.get('radius', None)
+
+        # 验证facility_type
+        if facility_type not in ['supermarket', 'wc', 'restaurant', 'node', 'others']:
+            return Response({"error": "Invalid facility type."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 过滤设施类型
+        facilities = [name for name in node_names if name.startswith(facility_type)]
+
+        if location:
+            if location not in graph.nodes:
+                return Response({"error": "Invalid location."}, status=status.HTTP_400_BAD_REQUEST)
+            # 计算从起点到每个设施的最短路径距离
+            facilities_with_distance = []
+            for facility in facilities:
+                path, distance, _ = dijkstra(graph, location, facility)
+                if radius is None or distance <= int(radius):
+                    facilities_with_distance.append({"name": facility, "distance": distance})
+            facilities = sorted(facilities_with_distance, key=lambda x: x['distance'])
+        else:
+            facilities = [{"name": facility, "distance": None} for facility in facilities]
+
+        return Response({"facilities": facilities}, status=status.HTTP_200_OK)
