@@ -16,11 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from django.contrib.auth.views import LoginView
+from django.contrib import admin
+from django.urls import path, include
+from django.contrib.auth import views as auth_views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('backend.authentication.urls')),
     path('api/routes/',include('backend.tourist_routes.urls')),
     path('api/diaries/',include('backend.diaries.urls')),
     path('api/search/',include('backend.search.urls')),
+    path('api/recommendations/', include('backend.recommendations.urls')),
+    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # 添加登录URL
 ]

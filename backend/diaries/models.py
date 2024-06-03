@@ -11,6 +11,7 @@ class DiaryEntry(models.Model):
     location = models.CharField(max_length=255)
     huffman_dict = models.TextField()  # 存储哈夫曼字典的JSON字符串
     huffman_data = models.BinaryField()  # 存储被哈夫曼压缩的数据
+    total_rating = models.IntegerField(default=0)  # 总评分
 
     def set_huffman_dict(self, huffman_dict):
         self.huffman_dict = json.dumps(huffman_dict)
@@ -27,3 +28,11 @@ class DiaryEntry(models.Model):
 
     def __str__(self):
         return self.title
+
+class DiaryRating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ratings')
+    diary_entry = models.ForeignKey(DiaryEntry, on_delete=models.CASCADE, related_name='ratings')
+    rating = models.IntegerField()  # -1 for dislike, +1 for like
+
+    class Meta:
+        unique_together = ('user', 'diary_entry')

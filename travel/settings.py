@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'backend',
+
     'backend.authentication',
     'backend.diaries',
     'backend.recommendations',
@@ -176,3 +177,8 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
 CSRF_USE_SESSIONS = False
+
+
+# backend/settings.py
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'

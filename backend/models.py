@@ -13,16 +13,10 @@ class Attraction(models.Model):
     description = models.TextField(db_column='简介')
     is_free = models.TextField(db_column='是否免费')
     detailed_address = models.TextField(db_column='具体地址')
-    view_count = models.IntegerField(default=0)  # 新增浏览量字段
 
     class Meta:
         db_table = 'sheet'
         managed = False  # 告诉 Django 不要管理该表
-
-    def save(self, *args, **kwargs):
-        if not self.view_count:
-            self.view_count = random.randint(0, 100)  # 初始化随机浏览量
-        super().save(*args, **kwargs)
 
 
 from django.db import models
