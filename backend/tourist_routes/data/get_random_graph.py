@@ -10,9 +10,25 @@ def generate_graph(num_nodes):
         "links": []
     }
 
+    # 定义结点名称规则
+    name_rules = {
+        "supermarket": int(num_nodes * 0.2),  # 超市 20%
+        "wc": int(num_nodes * 0.1),          # 卫生间 10%
+        "restaurant": int(num_nodes * 0.2),  # 餐厅 20%
+        "node": int(num_nodes * 0.3),        # 游览点 30%
+        "others": int(num_nodes * 0.2)       # 其他 20%
+    }
+
+    node_names = []
+    for key, count in name_rules.items():
+        for i in range(count):
+            node_names.append(f"{key}{i+1}")
+
+    random.shuffle(node_names)
+
     # 生成节点
     for i in range(num_nodes):
-        node_id = chr(ord('A') + i) if i < 26 else 'Node' + str(i)
+        node_id = node_names[i]
         graph["nodes"].append({"id": node_id})
 
     # 创建一个连通的骨架图，确保没有孤岛
@@ -52,9 +68,17 @@ def save_graph_to_json(graph, file_path):
     with open(file_path, 'w') as f:
         json.dump(graph, f, indent=2)
 
+def save_node_names_to_json(node_names, file_path):
+    with open(file_path, 'w') as f:
+        json.dump(node_names, f, indent=2)
+
 if __name__ == "__main__":
     num_nodes = 200  # 节点数量
 
     graph = generate_graph(num_nodes)
     save_graph_to_json(graph, "graph.json")
     print("Graph with 200 nodes has been generated and saved to graph.json")
+
+    node_names = [node["id"] for node in graph["nodes"]]
+    save_node_names_to_json(node_names, "node_names.json")
+    print("Node names have been generated and saved to node_names.json")
