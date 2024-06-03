@@ -9,6 +9,8 @@ import CreateDiary from '../components/CreateDiary.vue'; // 引入CreateDiary组
 import UpdateDiary from '../components/UpdateDiary.vue'; // 引入UpdateDiary组件
 import Recommendations from '../components/Recommendations.vue';
 import NotFound from '../components/NotFound.vue';
+import DiaryList from '../components/DiaryList.vue';
+import AllDiary from '../components/AllDiary.vue';
 
 const routes = [
   {
@@ -20,6 +22,16 @@ const routes = [
     path: '/notfound',
     name: 'NotFound',
     component: NotFound
+  },
+  {
+    path: '/diarylist',
+    name: 'DiaryList',
+    component: DiaryList
+  },
+  {
+    path: '/all-diaries',
+    name: 'AllDiary',
+    component: AllDiary
   },
   {
     path: '/recommendations',

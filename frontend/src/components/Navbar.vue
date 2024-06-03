@@ -1,15 +1,9 @@
-<!-- 这是导航栏，有4个选项 1. 首页（HomePage.vue），2. 寻路（Travel.vue），
-                         3. 日记(Diary.vue)，     4. 我的(UserInfo.vue) -->
-
-<!-- 若未登录点击日记会直接跳转到登录界面（Login.vue） -->
-<!-- 若未登录点击我的会直接跳转到登录界面（Login.vue） -->
-
 <template>
   <div class="navbar">
-    <router-link to="/recommendations" class="nav-item">首页</router-link>
-    <router-link to="/travel" class="nav-item">寻路</router-link>
-    <router-link :to="diaryLink" class="nav-item">日记</router-link>
-    <router-link :to="profileLink" class="nav-item">我的</router-link>
+    <router-link to="/recommendations" class="nav-item">推荐👍️</router-link>
+    <!-- 删除与寻路相关的代码行 -->
+    <router-link to="/diarylist" class="nav-item">日记📖</router-link>
+    <router-link :to="profileLink" class="nav-item">我的🧑</router-link>
   </div>
 </template>
 
@@ -19,18 +13,6 @@ import { useStore } from 'vuex'; // 引入 Vuex 中的 store
 
 const store = useStore(); // 获取 Vuex store 实例
 async function isLoggedIn() {
-  // try {
-  //   const response = await axios.get('http://localhost:8000/api/users/check-auth', {
-  //     headers: {
-  //       Authorization: `Bearer ${localStorage.getItem('token')}`
-  //     }
-  //   });
-
-  //   return response.data.isLoggedIn;
-  // } catch (error) {
-  //   console.error('检查用户登录状态失败:', error);
-  //   return false;
-  // }
   try {
     const response = await axios.get('http://localhost:8000/api/users/user/', {
       headers: {
@@ -77,5 +59,3 @@ const profileLink = computed(() => {
   font-weight: bold; /* 加粗字体 */
 }
 </style>
-
-

@@ -23,6 +23,9 @@
     <!-- 注销按钮 -->
     <button @click="logout" v-if="userInfo" class="logout-button">注销</button>
 
+    <!-- 包含 Diary 组件 -->
+    <Diary />
+
     <!-- 导航栏组件 -->
     <Navbar />
   </div>
@@ -32,6 +35,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import Navbar from './Navbar.vue';
+import Diary from './Diary.vue'; // 导入 Diary 组件
 // 导入路由实例
 import router from '../router/index';
 
@@ -124,7 +128,6 @@ const logout = async () => {
     showError('注销失败: ' + error.message);
   }
 };
-
 
 const showError = (errorMessage) => {
   error.value = errorMessage;

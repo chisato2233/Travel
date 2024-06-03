@@ -2,7 +2,7 @@
   <div class="search-bar">
     <select v-model="selectedType" @change="handleTypeChange" class="input-select">
       <option value="attractions">景点</option>
-      <option value="facilities">附近设施与美食</option>
+      <option value="facilities">附近设施</option>
       <option value="diaries">日记</option>
     </select>
     <input type="text" v-model="query" placeholder="搜索" @focus="isFocused = true" @blur="isFocused = false" class="input-text">
@@ -15,11 +15,18 @@
       <input type="number" v-model="popularity" placeholder="人气" class="rounded-input">
     </div>
 
-    <!-- 附近设施与美食相关输入框 -->
+    <!-- 附近设施相关输入框 -->
     <div v-if="selectedType === 'facilities'" class="additional-inputs">
-      <input type="number" v-model="locationId" placeholder="位置ID" required class="input-text">
-      <input type="text" v-model="type" placeholder="设施类型" required class="input-text">
-      <input type="number" v-model="radius" placeholder="搜索半径" min="0" class="rounded-input">
+      <select v-model="type" class="input-select">
+        <option value="" disabled>请选择设施类型</option>
+        <option value="supermarket">超市</option>
+        <option value="wc">卫生间</option>
+        <option value="restaurant">餐厅</option>
+        <option value="node">游览点</option>
+        <option value="others">其他</option>
+      </select>
+      <input type="text" v-model="location" placeholder="当前位置" class="input-text">
+      <input type="number" v-model="radius" placeholder="搜索半径 (米)" min="0" class="rounded-input">
     </div>
 
     <!-- 日记相关输入框 -->
@@ -28,6 +35,11 @@
       <input type="text" v-model="diaryKeywords" placeholder="关键词" class="input-text">
       <input type="date" v-model="startDate" placeholder="起始日期" class="input-text">
       <input type="date" v-model="endDate" placeholder="结束日期" class="input-text">
+      <div class="rating-sort">
+        <label>
+          <input type="checkbox" v-model="isSortByRating" class="pingfenpaixu"> 按评分排序
+        </label>
+      </div>
     </div>
 
     <button @click="handleSearch" class="search-button" :disabled="isSearchButtonDisabled">搜索</button>
@@ -35,7 +47,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, defineEmits } from 'vue';
 
 const query = ref('');
 const isFocused = ref(false);
@@ -47,43 +59,48 @@ const keywords = ref('');
 const rating = ref('');
 const popularity = ref('');
 
-// 附近设施与美食相关状态
-const locationId = ref('');
+// 附近设施相关状态
 const type = ref('');
-const radius = ref(500); // 默认搜索半径为500米
+const location = ref('');
+const radius = ref('');
 
 // 日记相关状态
 const userId = ref('');
 const diaryKeywords = ref('');
 const startDate = ref('');
 const endDate = ref('');
+const isSortByRating = ref(false);
 
 const emit = defineEmits(['search', 'updateSearchType', 'updateSearchParams']);
 
 const handleSearch = () => {
   let params = {};
+
   if (selectedType.value === 'attractions') {
     params = {
+      name: query.value,
       category: category.value,
-      keywords: keywords.value,
       rating: rating.value,
       popularity: popularity.value,
     };
   } else if (selectedType.value === 'facilities') {
     params = {
-      locationId: locationId.value,
       type: type.value,
+      location: location.value,
       radius: radius.value,
     };
   } else if (selectedType.value === 'diaries') {
     params = {
-      userId: userId.value,
       keywords: diaryKeywords.value,
+      isSortByRating: isSortByRating.value,
+      userId: userId.value,
       startDate: startDate.value,
       endDate: endDate.value,
     };
   }
+
   emit('search', query.value);
+  emit('updateSearchType', selectedType.value);
   emit('updateSearchParams', params);
 };
 
@@ -93,9 +110,10 @@ const handleTypeChange = () => {
 
 // 计算属性：检查是否禁用搜索按钮
 const isSearchButtonDisabled = computed(() => {
-  // 判断是否所有输入框都为空，若有任何一个输入框不为空，则返回false，否则返回true
-  return !(query.value || category.value || keywords.value || rating.value || popularity.value ||
-           locationId.value || type.value || radius.value || userId.value || diaryKeywords.value || startDate.value || endDate.value);
+  return !(
+    query.value || category.value || keywords.value || rating.value || popularity.value ||
+    type.value || location.value || radius.value || userId.value || diaryKeywords.value || startDate.value || endDate.value
+  );
 });
 </script>
 
@@ -114,8 +132,8 @@ const isSearchButtonDisabled = computed(() => {
   border: 1px solid #ccc;
   transition: border-color 0.3s;
   outline: none;
-  width: 100%; /* Full width to ensure responsiveness */
-  max-width: 400px; /* Max width for better aesthetics */
+  width: 100%;
+  max-width: 400px;
   box-sizing: border-box;
 }
 
@@ -124,7 +142,7 @@ const isSearchButtonDisabled = computed(() => {
 }
 
 .rounded-input {
-  border-radius: 20px; /* Round the edges completely */
+  border-radius: 20px;
 }
 
 .search-button {
@@ -135,9 +153,9 @@ const isSearchButtonDisabled = computed(() => {
   background-color: #28a745;
   color: #fff;
   transition: background-color 0.3s;
-  white-space: nowrap; /* Ensure text stays in one line */
+  white-space: nowrap;
   width: 100%;
-  max-width: 200px; /* Button width for better aesthetics */
+  max-width: 200px;
 }
 
 .search-button:hover {
@@ -151,4 +169,17 @@ const isSearchButtonDisabled = computed(() => {
   gap: 10px;
   width: 100%;
 }
+
+.rating-sort {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 </style>
+
