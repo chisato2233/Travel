@@ -13,20 +13,18 @@
           <p>{{ diary.content }}</p>
           <p>日期: {{ diary.date }}</p>
           <p>地点: {{ diary.location }}</p>
+          <p>评分: {{ diary.userRating }}</p> <!-- 显示用户评分 -->
           <!-- 更新日记按钮 -->
           <button @click="updateDiary(diary)" class="btn-update">
-            <i class="fas fa-pencil-alt"></i> 更新日记
+            <i class="fas fa-pencil-alt"></i> 🖊️
           </button>
 
           <!-- 删除日记按钮 -->
-          <button @click="deleteDiary(diary.id)" class="btn-delete">删除日记</button>
+          <button @click="deleteDiary(diary.id)" class="btn-delete">🗑️</button>
         </li>
       </ul>
     </div>
     <p v-else class="no-diaries">暂无日记。</p>
-    
-    <!-- 导航栏组件 -->
-    <Navbar />
   </div>
 </template>
 
@@ -34,7 +32,6 @@
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-import Navbar from './Navbar.vue';
 
 const diaries = ref([]); // 存储用户日记列表
 const router = useRouter();

@@ -5,7 +5,7 @@
       <SearchBar @search="performSearch" @updateSearchType="updateSearchType" @updateSearchParams="updateSearchParams" />
     </div>
 
-    <SearchResults :results="searchResults" />
+    <SearchResults :results="searchResults" :selectedType="searchType" />
 
     <!-- 登录组件 -->
     <Login v-if="!isLoggedIn && showLogin" @close="handleLoginClose" />
