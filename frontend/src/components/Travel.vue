@@ -42,6 +42,7 @@
     <img v-if="globalMapUrl" :src="globalMapUrl" alt="全局地图" class="global-map">
     <!-- 路径图片 -->
     <img v-if="routeImageUrl" :src="routeImageUrl" alt="路径图片" class="route-map">
+    <!-- <img src="http://example.com/media/tourist_routes/route_image.png" alt="路径图片" class="route-map"> -->
     <!-- 调试信息 -->
     <pre v-if="routeImageUrl">路径图片 URL: {{ routeImageUrl }}</pre>
   </div>
