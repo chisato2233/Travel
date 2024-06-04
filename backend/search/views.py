@@ -16,66 +16,75 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 
+# views.py
+# views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from backend.models import Attraction
+from backend.recommendations.models import AttractionPopularity, UserSearchHistory
+from rest_framework.permissions import IsAuthenticated
+from django.db.models import F
+import random
+
 class AttractionSearchView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         name = request.GET.get('name', None)
         category = request.GET.get('category', None)
-        keywords = request.GET.get('keywords', None)
         rating = request.GET.get('rating', None)
         popularity = request.GET.get('popularity', None)
 
         if not name:
             return Response({"error": "Invalid query parameters."}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         attractions = Attraction.objects.all()
-        
+
+        if rating:
+            attractions = attractions.filter(rating__gte=rating)
+        if popularity:
+            attractions = attractions.filter(popularity__view_count__gte=popularity)
+
         results = []
         for attraction in attractions:
             if name.lower() in attraction.name.lower():
-                if category and category.lower() not in attraction.category.lower():
-                    continue
-                if keywords and keywords.lower() not in attraction.description.lower():
-                    continue
-                if rating and attraction.rating < float(rating):
-                    continue
-                if popularity and attraction.sales < int(popularity):
-                    continue
-
-                try:
-                    attraction_popularity, created = AttractionPopularity.objects.get_or_create(
-                        attraction=attraction,
-                        defaults={'view_count': random.randint(1, 100)}
-                    )
-                    if not created:
-                        attraction_popularity.view_count = F('view_count') + 1
-                        attraction_popularity.save()
-                except ValueError as e:
-                    print(f"Error creating/updating AttractionPopularity: {e}")
-                    return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+                # 获取或创建 AttractionPopularity 对象
+                attraction_popularity, created = AttractionPopularity.objects.get_or_create(
+                    attraction=attraction,
+                    defaults={'view_count': random.randint(1, 100)}
+                )
+                if not created:
+                    attraction_popularity.view_count = F('view_count') + 1
+                    attraction_popularity.save()
+                    # 重新查询以获取最新的 view_count 值
+                    attraction_popularity.refresh_from_db()
 
                 results.append({
                     "id": attraction.id,
                     "name": attraction.name,
-                    "category": {},
                     "rating": attraction.rating,
-                    "popularity": attraction.sales,
+                    "popularity": attraction_popularity.view_count,
                     "description": attraction.description,
                     "location": attraction.province_city_district,
-                    "view_count": attraction.popularity.view_count if hasattr(attraction, 'popularity') else 0,
-                    "images": []  # 假设你有一张存储图片链接的表
                 })
 
-        
                 # 记录搜索历史
                 UserSearchHistory.objects.create(user=request.user, attraction=attraction)
 
-        if not results:
+        # 根据 category 参数进行排序
+        if category == 'rating':
+            results = sorted(results, key=lambda x: x['rating'], reverse=True)
+        elif category == 'popularity':
+            results = sorted(results, key=lambda x: x['popularity'], reverse=True)
+
+        # 返回前10个结果
+        sorted_results = results[:10]
+
+        if not sorted_results:
             return Response({"error": "No attractions found matching the criteria."}, status=status.HTTP_404_NOT_FOUND)
 
-        return Response({"attractions": results}, status=status.HTTP_200_OK)
+        return Response({"attractions": sorted_results}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def search_diaries(request):
