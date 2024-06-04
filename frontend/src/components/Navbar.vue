@@ -1,42 +1,31 @@
 <template>
   <div class="navbar">
-    <router-link to="/recommendations" class="nav-item">推荐👍️</router-link>
-    <!-- 删除与寻路相关的代码行 -->
-    <router-link to="/diarylist" class="nav-item">日记📖</router-link>
-    <router-link :to="profileLink" class="nav-item">我的🧑</router-link>
+    <div class="nav-item" :class="{ active: isCurrentRoute('/recommendations') }"
+      @click="navigateTo('/recommendations')">推荐👍️</div>
+    <div class="nav-item" :class="{ active: isCurrentRoute('/diarylist') }" @click="navigateTo('/diarylist')">日记📖</div>
+    <div class="nav-item" :class="{ active: isCurrentRoute(profileLink) }" @click="navigateTo(profileLink)">我的🧑</div>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import { useStore } from 'vuex'; // 引入 Vuex 中的 store
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
-const store = useStore(); // 获取 Vuex store 实例
-async function isLoggedIn() {
-  try {
-    const response = await axios.get('http://localhost:8000/api/users/user/', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    });
-    if (response.status === 200) {
-      console.log('用户已登录');
-      return true;
-    }
-  } catch (error) {
-    console.error('用户未登录:', error);
-    return false;
-  }
-}
-// 计算属性，根据用户登录状态决定跳转路径
-const diaryLink = computed(() => {
-  return localStorage.getItem("token") ? '/diary' : '/login';
-});
+const store = useStore();
+const router = useRouter();
 
-// 计算属性，根据用户登录状态决定跳转路径
 const profileLink = computed(() => {
   return localStorage.getItem("token") ? '/profile' : '/login';
 });
+
+const navigateTo = (path) => {
+  router.push(path);
+};
+
+const isCurrentRoute = (path) => {
+  return router.currentRoute.value.path === path;
+};
 </script>
 
 <style scoped>
@@ -45,17 +34,30 @@ const profileLink = computed(() => {
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #008000; /* 绿色背景 */
+  background-color: #f0f8ff;
   display: flex;
   justify-content: space-around;
-  padding: 10px 0;
-  border-top: 1px solid #ccc;
+  padding: 8px 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .nav-item {
   text-decoration: none;
-  color: #fff; /* 白色字体 */
+  color: #333;
   cursor: pointer;
-  font-weight: bold; /* 加粗字体 */
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+}
+
+.nav-item:hover {
+  background-color: #87cefa;
+  transform: scale(1.1);
+}
+
+.nav-item.active {
+  background-color: #4682b4;
+  color: #fff;
 }
 </style>

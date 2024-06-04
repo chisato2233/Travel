@@ -1,20 +1,48 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <transition name="fade" mode="out-in">
+      <router-view class="router-view" />
+    </transition>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-
-// 在页面加载后导航到HomePage组件
-onMounted(() => {
-  const router = useRouter();
-  router.push({ name: 'Recommendations' });
-});
+<script>
+export default {
+  name: 'App'
+};
 </script>
 
 <style>
-/* App.vue样式 */
+@keyframes gradientBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  background: linear-gradient(45deg, #ffcccc, #ccffff);
+  background-size: 200% 200%;
+  animation: gradientBackground 10s ease infinite;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

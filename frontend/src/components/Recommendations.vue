@@ -9,22 +9,24 @@
 
     <div v-if="isLoading" class="loading">加载中...</div>
     <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-    <div v-if="!isLoading && recommendations.length" class="recommendations">
-      <div v-for="destination in recommendations" :key="destination.id" class="destination-card"
-        @click="navigateToTravel">
-        <img :src="destination.imageURL" :alt="destination.name" class="destination-image">
-        <div class="destination-info">
-          <h3>{{ destination.name }}</h3>
-          <p>{{ destination.description }}</p>
-          <p>评分: {{ destination.rating }} / 人气: {{ destination.popularity }}</p>
-          <p v-if="destination.interests && destination.interests.length">兴趣: {{ destination.interests.join(', ') }}</p>
+    <transition name="fade" mode="out-in">
+      <div v-if="!isLoading && recommendations.length" class="recommendations">
+        <div v-for="destination in recommendations" :key="destination.id" class="destination-card"
+          @click="navigateToTravel">
+          <img :src="destination.imageURL" :alt="destination.name" class="destination-image">
+          <div class="destination-info">
+            <h3>{{ destination.name }}</h3>
+            <p>{{ destination.description }}</p>
+            <p>评分: {{ destination.rating }} / 人气: {{ destination.popularity }}</p>
+            <p v-if="destination.interests && destination.interests.length">兴趣: {{ destination.interests.join(', ') }}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
 
     <!-- 登录组件 -->
     <Login v-if="!isLoggedIn && showLogin" @close="handleLoginClose" />
-
 
     <!-- 导航栏组件 -->
     <Navbar />
@@ -160,12 +162,14 @@ h2 {
   margin: 10px;
   padding: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s;
+  transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
   cursor: pointer;
 }
 
 .destination-card:hover {
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+  border-color: #ff6666;
 }
 
 .destination-image {
@@ -186,5 +190,19 @@ h2 {
 
 .destination-info p {
   margin: 5px 0;
+}
+
+/* 页面切换动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter,
+.fade-leave-to
+
+/* .fade-leave-active in <2.1.8 */
+  {
+  opacity: 0;
 }
 </style>
