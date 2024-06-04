@@ -8,18 +8,22 @@
     </div>
 
     <div class="form-group">
-      <input type="text" id="startLocation" v-model="startLocation" placeholder="起点" class="rounded-input" @focus="inputFocus">
+      <input type="text" id="startLocation" v-model="startLocation" placeholder="起点" class="rounded-input"
+        @focus="inputFocus">
     </div>
 
     <div v-if="routeType === 'multi'" class="form-group">
-      <input type="text" id="viaPoint1" v-model="viaPoint1" placeholder="途径点1" class="rounded-input" @focus="inputFocus">
+      <input type="text" id="viaPoint1" v-model="viaPoint1" placeholder="途径点1" class="rounded-input"
+        @focus="inputFocus">
     </div>
     <div v-if="routeType === 'multi'" class="form-group">
-      <input type="text" id="viaPoint2" v-model="viaPoint2" placeholder="途径点2" class="rounded-input" @focus="inputFocus">
+      <input type="text" id="viaPoint2" v-model="viaPoint2" placeholder="途径点2" class="rounded-input"
+        @focus="inputFocus">
     </div>
 
     <div class="form-group">
-      <input type="text" id="endLocation" v-model="endLocation" placeholder="终点" class="rounded-input" @focus="inputFocus">
+      <input type="text" id="endLocation" v-model="endLocation" placeholder="终点" class="rounded-input"
+        @focus="inputFocus">
     </div>
 
     <div class="form-group">
@@ -45,7 +49,7 @@
     <!-- 调试信息 -->
     <pre v-if="routeImageUrl">路径图片 URL: {{ routeImageUrl }}</pre>
   </div>
-  
+
   <!-- 导航栏组件 -->
   <Navbar />
 </template>
@@ -138,30 +142,38 @@ h2 {
 .rounded-input {
   width: 100%;
   padding: 8px;
-  border-radius: 20px; /* 两端圆形 */
+  border-radius: 20px;
+  /* 两端圆形 */
   border: 1px solid #ccc;
 }
 
 .rounded-input:focus {
-  outline: none; /* 去掉默认的聚焦边框 */
-  border-color: #4CAF50; /* 聚焦时边框颜色 */
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* 聚焦时的阴影效果 */
+  outline: none;
+  /* 去掉默认的聚焦边框 */
+  border-color: #4CAF50;
+  /* 聚焦时边框颜色 */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+  /* 聚焦时的阴影效果 */
 }
 
 .search-button {
   width: 100%;
   padding: 8px 16px;
   border: none;
-  border-radius: 20px; /* 两端圆形 */
+  border-radius: 20px;
+  /* 两端圆形 */
   cursor: pointer;
   transition: background-color 0.3s;
-  background-color: #4CAF50; /* 绿色主色 */
+  background-color: #4CAF50;
+  /* 绿色主色 */
   color: #fff;
 }
 
 .search-button[disabled] {
-  background-color: #ccc; /* 禁用状态下按钮颜色变成灰色 */
-  cursor: not-allowed; /* 设置鼠标样式为禁用 */
+  background-color: #ccc;
+  /* 禁用状态下按钮颜色变成灰色 */
+  cursor: not-allowed;
+  /* 设置鼠标样式为禁用 */
 }
 
 .error-message {
@@ -172,27 +184,36 @@ h2 {
 
 .travel-container {
   width: 400px;
-  margin: 50px auto; /* 50px 的顶部边距，水平居中 */
-  padding: 50px; /* 添加内边距，使内容与盒子模型边缘有一定距离 */
+  margin: 50px auto;
+  /* 50px 的顶部边距，水平居中 */
+  padding: 50px;
+  /* 添加内边距，使内容与盒子模型边缘有一定距离 */
   /*border: 1px solid #ccc; 添加边框 */
-  border-radius: 10px; /* 圆角边框 */
+  border-radius: 10px;
+  /* 圆角边框 */
 }
 
 /* 全局地图样式 */
 .global-map {
   width: 100%;
-  max-width: 2000px; /* 设置最大宽度以防止图片过大 */
-  display: block; /* 让图片居中显示 */
+  max-width: 2000px;
+  /* 设置最大宽度以防止图片过大 */
+  display: block;
+  /* 让图片居中显示 */
   margin: auto;
-  margin-bottom: 20px; /* 添加底部边距 */
+  margin-bottom: 20px;
+  /* 添加底部边距 */
 }
 
 /* 路径图片样式 */
 .route-map {
   width: 100%;
-  max-width: 2000px; /* 设置最大宽度以防止图片过大 */
-  display: block; /* 让图片居中显示 */
+  max-width: 2000px;
+  /* 设置最大宽度以防止图片过大 */
+  display: block;
+  /* 让图片居中显示 */
   margin: auto;
-  margin-bottom: 20px; /* 添加底部边距 */    
+  margin-bottom: 20px;
+  /* 添加底部边距 */
 }
 </style>
