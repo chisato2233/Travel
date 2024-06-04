@@ -80,7 +80,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'database_test_0',
-        'USER': 'django_',
+        'USER': 'Zhang',
         'PASSWORD': '123456',
         'HOST': '10.29.85.244',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
@@ -163,7 +163,7 @@ SIMPLE_JWT = {
 import os
 # 媒体文件设置
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 # 确保静态文件配置正确
 STATIC_URL = '/static/'

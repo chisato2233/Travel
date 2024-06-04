@@ -51,7 +51,7 @@ onMounted(fetchAllDiaries);
 // 评分功能
 const rateDiary = async (diaryId, rating) => {
   try {
-    const response = await axios.post('http://localhost:8000/api/diaries/rate', {
+    const response = await axios.post('http://localhost:8000/api/diaries/rate/', {
       id: diaryId,
       my_rating: rating
     }, {
@@ -105,7 +105,6 @@ const rateDiary = async (diaryId, rating) => {
   margin-bottom: 10px;
   border: 1px solid #ccc; /* 灰色边框 */
   border-radius: 5px;
-  position: relative; /* 相对定位 */
 }
 
 .diary-item h3 {

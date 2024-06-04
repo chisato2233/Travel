@@ -174,8 +174,8 @@ class RoutesImageView(View):
 
             # 生成并保存包含路径的图像
             self.draw_route_on_blank_graph(self.graph, route, self.route_image_output_path)
-
-            image_url = request.build_absolute_uri(settings.MEDIA_URL + "tourist_routes/route_image.png")
+            image_path = os.path.join(settings.MEDIA_URL, 'tourist_routes/route_image.png')
+            image_url = request.build_absolute_uri(image_path)
             return JsonResponse({"image_url": image_url}, status=200)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
