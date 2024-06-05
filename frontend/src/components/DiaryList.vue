@@ -8,6 +8,7 @@
         <p>{{ diary.content }}</p>
         <p><strong>作者:</strong> {{ diary.author }}</p>
         <p><strong>发布日期:</strong> {{ diary.date }}</p>
+        <p><strong>总评分:</strong> {{ diary.rating }}</p>
         <div class="rating">
           <button @click="rateDiary(diary.id, 1)" class="rating-btn upvote" :class="{ active: diary.userRating === 1 }">▲</button>
           <span class="rating-score">{{ diary.rating }}</span>
@@ -18,7 +19,6 @@
     <div v-else>
       <p>没有推荐日记可显示。</p>
     </div>
-    <!-- 按钮放在右下角 -->
     <router-link to="/all-diaries" class="view-all-btn">
       查看全部日记
     </router-link>
@@ -109,6 +109,7 @@ const rateDiary = async (diaryId, rating) => {
   margin-bottom: 10px;
   border: 1px solid #ccc; /* 灰色边框 */
   border-radius: 5px;
+  text-align: left; /* 左对齐 */
 }
 
 .diary-item h3 {

@@ -9,7 +9,7 @@
 
     <div class="form-group">
       <input type="text" id="startLocation" v-model="startLocation" placeholder="起点" class="rounded-input"
-        @input="validateAndSuggest(startLocation, 'startLocationSuggestions')" @focus="inputFocus">
+        @input="validateAndSuggest('startLocation')" @focus="inputFocus">
       <ul v-if="startLocationSuggestions.length" class="suggestions">
         <li v-for="suggestion in startLocationSuggestions" :key="suggestion" @click="selectSuggestion('startLocation', suggestion)">{{ suggestion }}</li>
       </ul>
@@ -17,14 +17,14 @@
 
     <div v-if="routeType === 'multi'" class="form-group">
       <input type="text" id="viaPoint1" v-model="viaPoint1" placeholder="途径点1" class="rounded-input"
-        @input="validateAndSuggest(viaPoint1, 'viaPoint1Suggestions')" @focus="inputFocus">
+        @input="validateAndSuggest('viaPoint1')" @focus="inputFocus">
       <ul v-if="viaPoint1Suggestions.length" class="suggestions">
         <li v-for="suggestion in viaPoint1Suggestions" :key="suggestion" @click="selectSuggestion('viaPoint1', suggestion)">{{ suggestion }}</li>
       </ul>
     </div>
     <div v-if="routeType === 'multi'" class="form-group">
       <input type="text" id="viaPoint2" v-model="viaPoint2" placeholder="途径点2" class="rounded-input"
-        @input="validateAndSuggest(viaPoint2, 'viaPoint2Suggestions')" @focus="inputFocus">
+        @input="validateAndSuggest('viaPoint2')" @focus="inputFocus">
       <ul v-if="viaPoint2Suggestions.length" class="suggestions">
         <li v-for="suggestion in viaPoint2Suggestions" :key="suggestion" @click="selectSuggestion('viaPoint2', suggestion)">{{ suggestion }}</li>
       </ul>
@@ -32,7 +32,7 @@
 
     <div class="form-group">
       <input type="text" id="endLocation" v-model="endLocation" placeholder="终点" class="rounded-input"
-        @input="validateAndSuggest(endLocation, 'endLocationSuggestions')" @focus="inputFocus">
+        @input="validateAndSuggest('endLocation')" @focus="inputFocus">
       <ul v-if="endLocationSuggestions.length" class="suggestions">
         <li v-for="suggestion in endLocationSuggestions" :key="suggestion" @click="selectSuggestion('endLocation', suggestion)">{{ suggestion }}</li>
       </ul>
@@ -60,6 +60,16 @@
     <img v-if="routeImageUrl" :src="routeImageUrl" alt="路径图片" class="route-map">
     <!-- 调试信息 -->
     <pre v-if="routeImageUrl">路径图片 URL: {{ routeImageUrl }}</pre>
+  </div>
+
+  <!-- 路径信息展示 -->
+  <div v-if="route.length" class="route-info">
+    <h3>路径信息</h3>
+    <ul>
+      <li v-for="(step, index) in steps" :key="index">
+        从 {{ step.from }} 到 {{ step.to }} - 距离: {{ step.distance }} km, 时间: {{ step.time }} 小时
+      </li>
+    </ul>
   </div>
 
   <!-- 导航栏组件 -->
@@ -93,6 +103,7 @@ const viaPoint1Suggestions = ref([]);
 const viaPoint2Suggestions = ref([]);
 
 const validNodes = [
+  // 有效节点列表...
   "others39", "node19", "wc9", "supermarket23", "supermarket22", "supermarket29", "node27", "node58", "others36",
   "supermarket3", "node32", "node56", "supermarket17", "node39", "node31", "restaurant14", "wc7", "others7",
   "supermarket13", "wc12", "others6", "supermarket33", "restaurant15", "restaurant21", "others35", "node7", 
@@ -120,13 +131,35 @@ const validNodes = [
   "restaurant26", "restaurant24", "node36", "others30", "supermarket31", "restaurant34", "wc19", "restaurant1"
 ];
 
-const validateAndSuggest = (input, suggestionsRef) => {
-  if (!validNodes.includes(input.value)) {
+const validateAndSuggest = (field) => {
+  let input;
+  let suggestionsRef;
+
+  switch (field) {
+    case 'startLocation':
+      input = startLocation.value;
+      suggestionsRef = startLocationSuggestions;
+      break;
+    case 'viaPoint1':
+      input = viaPoint1.value;
+      suggestionsRef = viaPoint1Suggestions;
+      break;
+    case 'viaPoint2':
+      input = viaPoint2.value;
+      suggestionsRef = viaPoint2Suggestions;
+      break;
+    case 'endLocation':
+      input = endLocation.value;
+      suggestionsRef = endLocationSuggestions;
+      break;
+  }
+
+  if (!validNodes.includes(input)) {
     errorMessage.value = '请输入合法的节点名称';
   } else {
     errorMessage.value = '';
   }
-  const query = input.value.toLowerCase();
+  const query = input.toLowerCase();
   suggestionsRef.value = validNodes.filter(node => node.toLowerCase().includes(query));
 };
 
@@ -311,5 +344,19 @@ h2 {
   margin: auto;
   margin-bottom: 20px;
   /* 添加底部边距 */
+}
+
+/* 路径信息样式 */
+.route-info {
+  margin-top: 20px;
+}
+
+.route-info ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.route-info li {
+  margin-bottom: 10px;
 }
 </style>
