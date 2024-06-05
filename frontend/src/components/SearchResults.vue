@@ -8,6 +8,7 @@
         <p v-if="result.category">类别: {{ result.category }}</p>
         <p v-if="result.rating">评分: {{ result.rating }}</p>
         <p v-if="result.popularity">人气: {{ result.popularity }}</p>
+        <p v-if="result.location">位置: {{ result.location }}</p>
       </template>
       
       <template v-if="selectedType === 'facilities'">

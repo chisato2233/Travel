@@ -42,7 +42,7 @@ const performSearch = async (query) => {
   try {
     let response;
     if (searchType.value === 'attractions') {
-      response = await axios.get('http://localhost:8000/api/search/attractions/', {
+      response = await axios.get('http://localhost:8000/api/search/attractions', {
         headers: {
           'Authorization': `Bearer ${token}`
         }, params: { ...searchParams.value, name: query } });

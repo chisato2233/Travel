@@ -52,7 +52,8 @@ const validateAndSuggestLocation = () => {
   locationSuggestions.value = validLocations.filter(location =>
     location.toLowerCase().includes(inputLocation)
   );
-  if (!validLocations.includes(newDiary.value.location)) {
+  // 检查输入的地点是否有效
+  if (inputLocation && !validLocations.some(location => location.toLowerCase() === inputLocation)) {
     createError.value = '请输入合法的地点名称';
   } else {
     createError.value = '';

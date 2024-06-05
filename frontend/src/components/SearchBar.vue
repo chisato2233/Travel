@@ -9,10 +9,13 @@
 
     <!-- 景点相关输入框 -->
     <div v-if="selectedType === 'attractions'" class="additional-inputs">
-      <input type="text" v-model="category" placeholder="类别" class="input-text">
-      <input type="text" v-model="keywords" placeholder="关键词" class="input-text">
       <input type="number" v-model="rating" placeholder="评分" min="0" max="5" step="0.1" class="rounded-input">
       <input type="number" v-model="popularity" placeholder="人气" class="rounded-input">
+      <select v-model="category" class="input-select">
+        <option value="">排序类别</option>
+        <option value="rating">评分</option>
+        <option value="popularity">人气</option>
+      </select>
     </div>
 
     <!-- 附近设施相关输入框 -->
@@ -55,7 +58,6 @@ const selectedType = ref('attractions');
 
 // 景点相关状态
 const category = ref('');
-const keywords = ref('');
 const rating = ref('');
 const popularity = ref('');
 
@@ -108,78 +110,72 @@ const handleTypeChange = () => {
   emit('updateSearchType', selectedType.value);
 };
 
-// 计算属性：检查是否禁用搜索按钮
+// 计算搜索按钮的禁用状态
 const isSearchButtonDisabled = computed(() => {
-  return !(
-    query.value || category.value || keywords.value || rating.value || popularity.value ||
-    type.value || location.value || radius.value || userId.value || diaryKeywords.value || startDate.value || endDate.value
-  );
+  if (selectedType.value === 'attractions') {
+    return query.value.trim() === '' && category.value === '' && rating.value === '' && popularity.value === '';
+  } else if (selectedType.value === 'facilities') {
+    return type.value === '' && location.value.trim() === '' && radius.value === '';
+  } else if (selectedType.value === 'diaries') {
+    return diaryKeywords.value.trim() === '' && !isSortByRating.value && userId.value.trim() === '' && startDate.value === '' && endDate.value === '';
+  }
+  return false;
 });
+
 </script>
 
 <style scoped>
 .search-bar {
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
 }
 
-.input-select, .input-text, .rounded-input {
-  padding: 12px;
-  border-radius: 20px;
-  border: 1px solid #ccc;
-  transition: border-color 0.3s;
-  outline: none;
-  width: 100%;
-  max-width: 400px;
-  box-sizing: border-box;
+.input-select, .input-text, .rounded-input, .search-button {
+  margin: 5px;
 }
 
-.input-select:focus, .input-text:focus, .rounded-input:focus {
-  border-color: #28a745;
+.input-select {
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.input-text {
+  padding: 5px;
+  border-radius: 5px;
 }
 
 .rounded-input {
-  border-radius: 20px;
+  padding: 5px;
+  border-radius: 5px;
 }
 
 .search-button {
-  padding: 12px 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: #007BFF;
+  color: white;
   border: none;
-  border-radius: 20px;
   cursor: pointer;
-  background-color: #28a745;
-  color: #fff;
-  transition: background-color 0.3s;
-  white-space: nowrap;
-  width: 100%;
-  max-width: 200px;
 }
 
-.search-button:hover {
-  background-color: #218838;
+.search-button:disabled {
+  background-color: #CCC;
+  cursor: not-allowed;
 }
 
 .additional-inputs {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
+  flex-direction: column;
+  align-items: center;
 }
 
 .rating-sort {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-label {
   display: flex;
   align-items: center;
-  gap: 5px;
+}
+
+.pingfenpaixu {
+  margin-left: 5px;
 }
 </style>
-
