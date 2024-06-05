@@ -12,6 +12,8 @@ import NotFound from '../components/NotFound.vue';
 import DiaryList from '../components/DiaryList.vue';
 import AllDiary from '../components/AllDiary.vue';
 
+import VideoListView from '../views/AIGC/VideoListView.vue';
+
 const routes = [
   {
     path: '/',
@@ -73,7 +75,12 @@ const routes = [
     path: '/update-diary/:id', // 修改路由路径，接收日记ID作为参数
     name: 'UpdateDiary',
     component: UpdateDiary
-  }
+  },
+  {
+    path: '/aigc-vedio',
+    name: 'VideoList',
+    component: VideoListView,
+  },
 ];
 
 const router = createRouter({

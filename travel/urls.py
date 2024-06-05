@@ -21,7 +21,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
-
+from backend.views import ImageToVideoAPIView,VideoStatusView,VideoDataView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,7 +31,13 @@ urlpatterns = [
     path('api/search/',include('backend.search.urls')),
     path('api/recommendations/', include('backend.recommendations.urls')),
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),  # 添加登录URL
+    
+    
+    path('api/image-to-video/upload_image/', ImageToVideoAPIView.as_view(), name='image_to_video'),
+    path('api/image-to-video/vedio_status/', VideoStatusView.as_view(), name='video-status'),    
+    path('api/image-to-video/video_data/', VideoDataView.as_view(), name='video-data'),
 ]
 
 if settings.DEBUG: 
     urlpatterns += static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
+
