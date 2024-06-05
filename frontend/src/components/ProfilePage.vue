@@ -36,8 +36,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import Navbar from './Navbar.vue';
 import Diary from './Diary.vue'; // 导入 Diary 组件
-// 导入路由实例
-import router from '../router/index';
+import router from '../router/index'; // 导入路由实例
 
 const userInfo = ref(null);
 const newEmail = ref('');
@@ -47,7 +46,6 @@ const isUserLoggedIn = ref(false);
 const showErrorAndRedirectToLogin = (errorMessage) => {
   error.value = errorMessage;
   if (errorMessage === 'Token无效或已过期') {
-    // 使用编程式导航将用户导航到Login.vue界面
     router.push({ name: 'Login' });
   }
 };
@@ -143,74 +141,118 @@ function getRefreshToken() {
 </script>
 
 <style scoped>
-.error-message {
-  color: #ff4d4f; /* Red color for error messages */
+p {
+  color:#000000
 }
-
 .profile-page {
-  max-width: 800px;
+  max-width: 600px;
   margin: auto;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #000000;
+}
+
+.error-message {
+  color: #ff4d4f; /* 红色 */
+  margin-bottom: 20px;
 }
 
 .user-info {
-  background-color: #f0f2f5; /* Light gray background for user information */
-  padding: 10px;
-  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.2); /* 更浅的白色背景 */
+  padding: 15px;
+  border-radius: 10px;
   margin-bottom: 20px;
+  color: #fff;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .update-form {
   margin-top: 20px;
+  width: 100%;
 }
 
 label {
   display: block;
   margin-bottom: 5px;
+  color: #000000;
 }
 
 input {
   width: 100%;
-  padding: 8px;
+  padding: 10px;
   margin-bottom: 10px;
-  border: 1px solid #d9d9d9; /* Light gray border */
-  border-radius: 4px;
+  border: 3px solid #000000;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #000000;
+}
+
+input:focus {
+  outline: none;
+  border-color: #0c720e;
 }
 
 button {
   width: 100%;
-  padding: 8px 16px;
-  background-color: #4fea51; /* Blue color for buttons */
-  color: white;
+  padding: 10px;
+  background-color: #4fea51;
+  color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s ease; /* Smooth transition on hover */
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.logout-button{
-  width: 250px;
-  padding: 8px 16px;
-  background-color: #4fea51; /* Blue color for buttons */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease; /* Smooth transition on hover */
-}
-
-button:hover, .logout-button:hover {
-  background-color: #22bd07; /* Darker blue color on hover */
+button:hover {
+  background-color: #22bd07;
+  transform: scale(1.05);
 }
 
 .logout-button {
   margin-top: 10px;
-  background-color: #4fdd60; /* Red color for logout button */
+  background-color: #ff4d4f;
+  width: 100%;
 }
 
+.logout-button:hover {
+  background-color: #ff1f1f;
+}
+
+h3 {
+  color: #000000;
+}
+
+@keyframes gradientBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  background: linear-gradient(45deg, #4b6cb7, #182848);
+  background-size: 200% 200%;
+  animation: gradientBackground 10s ease infinite;
+  color: #fff;
+}
 </style>

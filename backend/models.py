@@ -39,7 +39,7 @@ class GeneratedVideo(models.Model):
     generation_id = models.CharField(max_length=255, unique=True)
     status = models.CharField(max_length=50, default='in-progress')
     video_data = models.TextField(null=True, blank=True)
-    seed = models.IntegerField(null=True, blank=True)
+    seed = models.BigIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

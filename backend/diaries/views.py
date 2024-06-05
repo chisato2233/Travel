@@ -87,7 +87,7 @@ class RateDiary(APIView):
         diary_id = request.data.get('id')
         my_rating = request.data.get('my_rating')
 
-        if my_rating not in [1, -1]:
+        if my_rating not in [1, 0,-1]:
             return Response({"error": "Invalid rating value. Must be 1 or -1."}, status=status.HTTP_400_BAD_REQUEST)
 
         diary = get_object_or_404(DiaryEntry, id=diary_id)
@@ -100,7 +100,7 @@ class RateDiary(APIView):
         )
 
         # Update the total rating
-        diary.total_rating = DiaryRating.objects.filter(diary_entry=diary).aggregate(total=models.Sum('rating'))['total']
+        diary.rating = DiaryRating.objects.filter(diary_entry=diary).aggregate(total=models.Sum('rating'))['total']
         diary.save()
 
         serialized_diary = DiaryEntrySerializer(diary, context={'request': request}).data

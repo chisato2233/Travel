@@ -11,7 +11,7 @@ class DiaryEntry(models.Model):
     location = models.CharField(max_length=255)
     huffman_dict = models.TextField()  # 存储哈夫曼字典的JSON字符串
     huffman_data = models.BinaryField()  # 存储被哈夫曼压缩的数据
-    total_rating = models.IntegerField(default=0)  # 总评分
+    rating = models.IntegerField(default=0)  # 总评分
 
     def set_huffman_dict(self, huffman_dict):
         self.huffman_dict = json.dumps(huffman_dict)

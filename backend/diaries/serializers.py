@@ -12,7 +12,7 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DiaryEntry
-        fields = ['id', 'title', 'content', 'date', 'location', 'author', 'total_rating', 'userRating']
+        fields = ['id', 'title', 'content', 'date', 'location', 'author', 'rating', 'userRating']
 
     def get_userRating(self, obj):
         request = self.context.get('request')

@@ -1,27 +1,27 @@
 <template>
   <div class="create-diary">
     <h2>创建日记</h2>
-    
+
     <!-- 创建日记表单 -->
     <form @submit.prevent="createDiary" class="diary-form">
       <input type="text" v-model="newDiary.title" placeholder="标题" class="input-field">
       <textarea v-model="newDiary.content" placeholder="内容" class="textarea-field"></textarea>
       <input type="date" v-model="newDiary.date" placeholder="日期" class="input-field">
-      
+
       <input type="text" v-model="newDiary.location" placeholder="地点" class="input-field"
-             @input="validateAndSuggestLocation" @focus="clearError">
+        @input="validateAndSuggestLocation" @focus="clearError">
       <ul v-if="locationSuggestions.length" class="suggestions">
         <li v-for="suggestion in locationSuggestions" :key="suggestion" @click="selectSuggestion(suggestion)">
           {{ suggestion }}
         </li>
       </ul>
-      
+
       <button type="submit" class="btn-create">创建日记</button>
     </form>
-   
+
     <!-- 提示用户创建失败 -->
     <p v-if="createError" class="error-message">{{ createError }}</p>
-    
+
     <!-- 导航栏组件 -->
     <Navbar />
   </div>
@@ -131,10 +131,20 @@ const createDiary = async () => {
   max-width: 600px;
   margin: auto;
   padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.create-diary h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
 }
 
 .diary-form {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .input-field,
@@ -144,6 +154,12 @@ const createDiary = async () => {
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  transition: border-color 0.3s;
+}
+
+.input-field:focus,
+.textarea-field:focus {
+  border-color: #007bff;
 }
 
 .suggestions {
@@ -170,17 +186,25 @@ const createDiary = async () => {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #28a745; /* 绿色背景 */
-  color: #fff; /* 白色字体 */
+  background-color: #28a745;
+  /* 绿色背景 */
+  color: #fff;
+  /* 白色字体 */
   cursor: pointer;
-  font-weight: bold; /* 加粗字体 */
+  font-weight: bold;
+  /* 加粗字体 */
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .btn-create:hover {
-  background-color: #218838; /* 深绿色背景 */
+  background-color: #218838;
+  /* 深绿色背景 */
+  transform: scale(1.05);
 }
 
 .error-message {
   color: #ff0000;
+  text-align: center;
+  margin-top: 10px;
 }
 </style>

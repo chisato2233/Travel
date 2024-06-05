@@ -1,19 +1,29 @@
 <template>
   <div class="diary">
     <h2>我的日记</h2>
-    
+
     <!-- 添加日记按钮 -->
     <router-link :to="{ name: 'CreateDiary' }" class="btn-add">+</router-link>
 
     <!-- 展示用户日记列表 -->
     <div v-if="diaries.length > 0">
       <ul class="diary-list">
-        <li v-for="diary in sortedDiaries" :key="diary.id" class="diary-item">
+        <li v-for="diary in sortedDiaries" :key="diary.id" class="diary-item" @mouseover="hover = diary.id"
+          @mouseleave="hover = null">
           <h3>{{ diary.title }}</h3>
           <p>{{ diary.content }}</p>
           <p>日期: {{ diary.date }}</p>
           <p>地点: {{ diary.location }}</p>
-          <p>评分: {{ diary.userRating }}</p> <!-- 显示用户评分 -->
+          <p>评分: {{ diary.userRating }}</p>
+          <!-- 评分按钮 -->
+          <div class="rating" :class="{ active: hover === diary.id }">
+            <button @click="rateDiary(diary, 1)" class="rating-btn upvote"
+              :class="{ active: diary.userRating === 1 }">▲</button>
+            <span class="rating-score" :class="{ positive: diary.rating > 0, negative: diary.rating < 0 }">{{
+              diary.rating }}</span>
+            <button @click="rateDiary(diary, -1)" class="rating-btn downvote"
+              :class="{ active: diary.userRating === -1 }">▼</button>
+          </div>
           <!-- 更新日记按钮 -->
           <button @click="updateDiary(diary)" class="btn-update">
             <i class="fas fa-pencil-alt"></i> 🖊️
@@ -35,6 +45,7 @@ import { useRouter } from 'vue-router';
 
 const diaries = ref([]); // 存储用户日记列表
 const router = useRouter();
+const hover = ref(null);
 
 // 获取用户日记列表的方法
 const fetchDiaries = async () => {
@@ -73,12 +84,12 @@ const sortedDiaries = computed(() => {
 // 更新日记
 const updateDiary = (diary) => {
   // 导航到UpdateDiary路由时，传递diaryData和id参数
-  router.push({ 
-    name: 'UpdateDiary', 
-    params: { 
-      diaryData: diary, 
+  router.push({
+    name: 'UpdateDiary',
+    params: {
+      diaryData: diary,
       id: diary.id // 传递id参数
-    } 
+    }
   });
 }
 
@@ -106,6 +117,42 @@ const deleteDiary = async (diaryId) => {
     }
   }
 }
+
+// 评分功能
+const rateDiary = async (diary, rating) => {
+  const newRating = diary.userRating === rating ? 0 : rating; // 如果再次点击相同按钮则取消评分
+  try {
+    const response = await axios.post('http://localhost:8000/api/diaries/rate/', {
+      id: diary.id,
+      my_rating: newRating
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    const updatedDiary = response.data;
+    diary.rating = updatedDiary.rating;
+    diary.userRating = newRating;
+    animateRating(diary.id, rating);
+  } catch (error) {
+    console.error('评分失败:', error);
+    errorMessage.value = '评分失败，请稍后重试。';
+  }
+};
+
+// 动画效果
+const animateRating = (diaryId, rating) => {
+  const diary = diaries.value.find(d => d.id === diaryId);
+  if (!diary) return;
+  const ratingBtn = document.querySelector(`.diary-item[key="${diaryId}"] .rating-btn.${rating === 1 ? 'upvote' : 'downvote'}`);
+  if (ratingBtn) {
+    ratingBtn.classList.add('rated');
+    setTimeout(() => {
+      ratingBtn.classList.remove('rated');
+    }, 1000);
+  }
+};
 </script>
 
 <style scoped>
@@ -121,7 +168,21 @@ const deleteDiary = async (diaryId) => {
 }
 
 .diary-item {
-  margin-bottom: 20px;
+  background-color: #e6ffe6;
+  /* 更浅的绿色背景 */
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  /* 灰色边框 */
+  border-radius: 5px;
+  text-align: left;
+  /* 左对齐 */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.diary-item:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .no-diaries {
@@ -148,9 +209,10 @@ const deleteDiary = async (diaryId) => {
   padding: 5px 10px;
   border: none;
   border-radius: 5px;
-
-  background-color: #25dc44; /* 蓝色背景 */
-  color: #fff; /* 白色字体 */
+  background-color: #25dc44;
+  /* 蓝色背景 */
+  color: #fff;
+  /* 白色字体 */
   cursor: pointer;
   font-size: 14px;
   margin-top: 5px;
@@ -160,10 +222,72 @@ const deleteDiary = async (diaryId) => {
   padding: 5px 10px;
   border: none;
   border-radius: 5px;
-  background-color: #dc3545; /* 红色背景 */
-  color: #fff; /* 白色字体 */
+  background-color: #dc3545;
+  /* 红色背景 */
+  color: #fff;
+  /* 白色字体 */
   cursor: pointer;
   font-size: 14px;
   margin-top: 5px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  /* 右对齐 */
+  margin-top: 10px;
+}
+
+.rating-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 2em;
+  transition: transform 0.2s;
+}
+
+.rating-btn:hover {
+  transform: scale(1.2);
+}
+
+.rating-btn.upvote.active {
+  color: green;
+}
+
+.rating-btn.downvote.active {
+  color: red;
+}
+
+.rating-score {
+  margin: 0 10px;
+  font-size: 2em;
+  transition: color 0.3s;
+}
+
+.rating-score.positive {
+  color: green;
+}
+
+.rating-score.negative {
+  color: red;
+}
+
+.rated {
+  animation: rated 0.5s forwards;
+}
+
+@keyframes rated {
+  0% {
+    transform: scale(1.2);
+  }
+
+  50% {
+    transform: scale(1.5);
+  }
+
+  100% {
+    transform: scale(1.2);
+  }
 }
 </style>

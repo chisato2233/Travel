@@ -47,9 +47,9 @@ import heapq
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from backend.diaries.models import DiaryEntry
+from backend.diaries.models import DiaryEntry,DiaryRating
 from rest_framework.permissions import IsAuthenticated
-
+from backend.diaries.serializers import DiaryEntrySerializer
 class DiaryRecommendationView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -58,20 +58,21 @@ class DiaryRecommendationView(APIView):
         diaries = DiaryEntry.objects.all()
 
         # 将日记转换为字典列表
-        diary_list = [
-            {
+        diary_list = []
+        for diary in diaries:
+            user_rating = DiaryRating.objects.filter(user=request.user, diary_entry_id=diary.id).first()
+            diary_list.append({
                 "id": diary.id,
                 "title": diary.title,
                 "content": diary.content,
                 "date": diary.date,
                 "location": diary.location,
                 "author": diary.user.username,
-                "rating": diary.rating if hasattr(diary, 'rating') else 0  # 假设存在rating字段
-            }
-            for diary in diaries
-        ]
+                "rating": diary.rating if hasattr(diary, 'rating') else 0,
+                "userRating": user_rating.rating if user_rating else 0
+            })
 
-        # 使用大顶堆获取评分最高的前十个日记
+                # 使用大顶堆获取评分最高的前十个日记
         top_diaries = heapq.nlargest(10, diary_list, key=lambda x: x['rating'])
 
         return Response(top_diaries, status=status.HTTP_200_OK)

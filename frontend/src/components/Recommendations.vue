@@ -13,7 +13,6 @@
       <div v-if="!isLoading && recommendations.length" class="recommendations">
         <div v-for="destination in recommendations" :key="destination.id" class="destination-card"
           @click="navigateToTravel">
-          <img :src="destination.imageURL" :alt="destination.name" class="destination-image">
           <div class="destination-info">
             <h3>{{ destination.name }}</h3>
             <p>{{ destination.description }}</p>
@@ -119,16 +118,22 @@ onMounted(fetchRecommendations);
   width: 80%;
   margin: auto;
   padding: 20px;
+  background-color: #f9f9f9;
+  /* 浅色背景 */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 h2 {
   margin: 0;
+  color: #333;
 }
 
 .search-button {
@@ -136,11 +141,18 @@ h2 {
   border: none;
   font-size: 24px;
   cursor: pointer;
+  color: #333;
+  transition: transform 0.3s ease;
+}
+
+.search-button:hover {
+  transform: scale(1.1);
 }
 
 .loading {
   text-align: center;
   font-size: 18px;
+  color: #666;
 }
 
 .error-message {
@@ -157,27 +169,21 @@ h2 {
 
 .destination-card {
   width: 300px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 10px;
   margin: 10px;
   padding: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  /* 白色背景 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
   cursor: pointer;
 }
 
 .destination-card:hover {
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transform: scale(1.05);
-  border-color: #ff6666;
-}
-
-.destination-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  border-color: #007bff;
 }
 
 .destination-info {
@@ -186,10 +192,12 @@ h2 {
 
 .destination-info h3 {
   margin: 0 0 10px;
+  color: #007bff;
 }
 
 .destination-info p {
   margin: 5px 0;
+  color: #555;
 }
 
 /* 页面切换动画 */
