@@ -5,12 +5,14 @@ import Register from '../components/Register.vue';
 import HomePage from '../components/HomePage.vue';
 import Travel from '../components/Travel.vue';
 import Diary from '../components/Diary.vue';
-import CreateDiary from '../components/CreateDiary.vue'; // 引入CreateDiary组件
-import UpdateDiary from '../components/UpdateDiary.vue'; // 引入UpdateDiary组件
+import CreateDiary from '../components/CreateDiary.vue';
+import UpdateDiary from '../components/UpdateDiary.vue';
 import Recommendations from '../components/Recommendations.vue';
 import NotFound from '../components/NotFound.vue';
 import DiaryList from '../components/DiaryList.vue';
 import AllDiary from '../components/AllDiary.vue';
+import AllLocations from '../components/AllLocations.vue'; // Add this line
+import AllNodes from '../components/AllNodes.vue'; // Add this line
 
 import VideoListView from '../views/AIGC/VideoListView.vue';
 
@@ -67,12 +69,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/create-diary', // 设置CreateDiary.vue的路由路径
+    path: '/create-diary',
     name: 'CreateDiary',
     component: CreateDiary
   },
   {
-    path: '/update-diary/:id', // 修改路由路径，接收日记ID作为参数
+    path: '/update-diary/:id',
     name: 'UpdateDiary',
     component: UpdateDiary
   },
@@ -80,6 +82,17 @@ const routes = [
     path: '/aigc-vedio',
     name: 'VideoList',
     component: VideoListView,
+  },
+  // Add the routes for AllLocations and AllNodes
+  {
+    path: '/all-locations',
+    name: 'AllLocations',
+    component: AllLocations
+  },
+  {
+    path: '/all-nodes',
+    name: 'AllNodes',
+    component: AllNodes
   },
 ];
 

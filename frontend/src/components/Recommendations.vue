@@ -3,6 +3,8 @@
     <div class="header">
       <h2>推荐目的地</h2>
       <div>
+        <button class="nav-button" @click="navigateToAllLocations">查看全部景点</button>
+        <button class="nav-button" @click="navigateToAllNodes">查看全部节点</button>
         <button class="search-button" @click="navigateToSearch">
           🔍
         </button>
@@ -29,6 +31,8 @@
       </div>
     </transition>
 
+    
+
     <!-- 登录组件 -->
     <Login v-if="!isLoggedIn && showLogin" @close="handleLoginClose" />
 
@@ -41,7 +45,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import Navbar from './Navbar.vue'; // 导入导航栏组件
+import Navbar from './Navbar.vue';
 import Login from './Login.vue';
 
 const recommendations = ref([]);
@@ -51,39 +55,35 @@ const router = useRouter();
 
 const token = localStorage.getItem('token');
 
-// 判断用户是否已经登录，如果已经登录且令牌有效，则不再显示登录界面
 const isLoggedIn = ref(!!token);
-const showLogin = ref(false); // 初始状态为隐藏登录界面
-const manualLoginClose = ref(false); // 标志位，用于跟踪用户是否手动关闭了登录界面
+const showLogin = ref(false);
+const manualLoginClose = ref(false);
 
 const openLogin = () => {
-  if (!manualLoginClose.value && !isLoggedIn.value) { // 仅在用户未手动关闭登录界面且未登录的情况下自动显示
-    showLogin.value = true; // 控制显示登录界面
+  if (!manualLoginClose.value && !isLoggedIn.value) {
+    showLogin.value = true;
   }
 };
 
 const handleLoginClose = () => {
-  showLogin.value = false; // 控制隐藏登录界面
-  manualLoginClose.value = true; // 设置标志位，表示用户已手动关闭登录界面
+  showLogin.value = false;
+  manualLoginClose.value = true;
 };
 
-// 监听用户登录状态的变化，如果用户登录成功，则隐藏登录组件
 watch(isLoggedIn, (newValue) => {
   if (newValue) {
-    handleLoginClose(); // 登录成功后关闭登录组件
+    handleLoginClose();
   }
 });
 
-// 在进入主页后一段时间后显示登录组件
 onMounted(() => {
   setTimeout(() => {
     openLogin();
-  }, 5000); // 5秒后显示登录组件
+  }, 5000);
 });
 
 const fetchRecommendations = async () => {
   try {
-    // 从 localStorage 中获取令牌，如果不存在则返回 null
     const token = localStorage.getItem('token');
 
     const response = await axios.get('http://localhost:8000/api/recommendations/destinations/', {
@@ -115,6 +115,13 @@ const navigateToTravel = () => {
   router.push({ name: 'Travel' });
 };
 
+const navigateToAllLocations = () => { // 导航到 AllLocations.vue
+  router.push({ name: 'AllLocations' });
+};
+
+const navigateToAllNodes = () => { // 导航到 AllNodes.vue
+  router.push({ name: 'AllNodes' });
+}
 const navigateToAIGCVideo = () => {
   router.push({ name: 'VideoList' });
 };
@@ -128,7 +135,6 @@ onMounted(fetchRecommendations);
   margin: auto;
   padding: 20px;
   background-color: #f9f9f9;
-  /* 浅色背景 */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -184,7 +190,6 @@ h2 {
   margin: 10px;
   padding: 15px;
   background-color: #fff;
-  /* 白色背景 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
   cursor: pointer;
@@ -236,5 +241,21 @@ h2 {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* 新添加的按钮样式 */
+.nav-button {
+  background-color: #4CAF50; /* 绿色 */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+}
+
+.nav-button:hover {
+  transform: scale(1.05);
 }
 </style>
