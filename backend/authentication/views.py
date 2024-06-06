@@ -23,6 +23,7 @@ from .serializers import UserRegistrationSerializer  # 确保从正确的位置�
 class UserRegistrationView(views.APIView):
     def post(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer(data=request.data)
+        print(serializer)
         if serializer.is_valid():
             user = serializer.save()
             return Response({

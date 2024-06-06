@@ -6,8 +6,9 @@
       <li v-for="diary in diaries" :key="diary.id" class="diary-item" @mouseover="hover = diary.id"
         @mouseleave="hover = null">
         <h3 @click="toggleContent(diary)">{{ diary.title }}</h3>
-        <p v-if="diary.showContent">{{ diary.content }}</p>
-        <p v-else>{{ abbreviateContent(diary.content) }}</p>
+        <p v-if="diary.showContent" v-html="diary.displayContent"></p>
+        <p v-else v-html="abbreviateContent(diary.content)"></p>
+
         <p><strong>作者:</strong> {{ diary.author }}</p>
         <p><strong>发布日期:</strong> {{ diary.date }}</p>
         <div class="rating" :class="{ active: hover === diary.id }">
@@ -34,6 +35,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import Navbar from './Navbar.vue';
 import Sidebar from './Sidebar.vue';
+
 
 const diaries = ref([]);
 const errorMessage = ref('');
@@ -80,14 +82,16 @@ const rateDiary = async (diary, rating) => {
   }
 };
 
-// 切换日记内容显示
 const toggleContent = (diary) => {
   diary.showContent = !diary.showContent;
+  if (diary.showContent) {
+    diary.displayContent = diary.content.replace(/\n/g, '<br>');
+  }
 };
 
-// 内容摘要
 const abbreviateContent = (content) => {
-  return content.length > 100 ? content.substring(0, 100) + '...' : content;
+  const abbreviated = content.length > 100 ? content.substring(0, 100) + '...' : content;
+  return abbreviated.replace(/\n/g, '<br>');
 };
 
 // 动画效果
