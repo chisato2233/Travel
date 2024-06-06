@@ -16,17 +16,15 @@
     </div>
 
     <div v-if="routeType === 'multi'" class="form-group">
-      <input type="text" id="viaPoint1" v-model="viaPoint1" placeholder="途径点1" class="rounded-input"
-        @input="validateAndSuggest('viaPoint1')" @focus="inputFocus">
-      <ul v-if="viaPoint1Suggestions.length" class="suggestions">
-        <li v-for="suggestion in viaPoint1Suggestions" :key="suggestion" @click="selectSuggestion('viaPoint1', suggestion)">{{ suggestion }}</li>
-      </ul>
+      <label for="viaPointCount">途径点数量</label>
+      <input type="number" id="viaPointCount" v-model="viaPointCount" min="2" max="200" class="rounded-input">
     </div>
-    <div v-if="routeType === 'multi'" class="form-group">
-      <input type="text" id="viaPoint2" v-model="viaPoint2" placeholder="途径点2" class="rounded-input"
-        @input="validateAndSuggest('viaPoint2')" @focus="inputFocus">
-      <ul v-if="viaPoint2Suggestions.length" class="suggestions">
-        <li v-for="suggestion in viaPoint2Suggestions" :key="suggestion" @click="selectSuggestion('viaPoint2', suggestion)">{{ suggestion }}</li>
+
+    <div v-if="routeType === 'multi'" v-for="(viaPoint, index) in viaPoints" :key="index" class="form-group">
+      <input type="text" :id="'viaPoint' + index" v-model="viaPoints[index]" :placeholder="'途径点' + (index + 1)" class="rounded-input"
+        @input="validateAndSuggest('viaPoints', index)" @focus="inputFocus">
+      <ul v-if="viaPointSuggestions[index] && viaPointSuggestions[index].length" class="suggestions">
+        <li v-for="suggestion in viaPointSuggestions[index]" :key="suggestion" @click="selectSuggestion('viaPoints', suggestion, index)">{{ suggestion }}</li>
       </ul>
     </div>
 
@@ -77,15 +75,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import axios from 'axios';
 import Navbar from './Navbar.vue'; // 导入导航栏组件
 import globalMapImage from './graph_visualization.png'; // 导入本地全局地图图片
 
 const startLocation = ref('');
 const endLocation = ref('');
-const viaPoint1 = ref('');
-const viaPoint2 = ref('');
+const viaPointCount = ref(2); // 默认途径点数量为2
+const viaPoints = ref(Array(viaPointCount.value).fill(''));
 const strategy = ref('shortest');
 const routeType = ref('single');
 const errorMessage = ref('');
@@ -99,8 +97,7 @@ const routeImageUrl = ref(''); // 路径图片的 URL
 
 const startLocationSuggestions = ref([]);
 const endLocationSuggestions = ref([]);
-const viaPoint1Suggestions = ref([]);
-const viaPoint2Suggestions = ref([]);
+const viaPointSuggestions = ref(Array(viaPointCount.value).fill([]));
 
 const validNodes = [
   // 有效节点列表...
@@ -131,56 +128,44 @@ const validNodes = [
   "restaurant26", "restaurant24", "node36", "others30", "supermarket31", "restaurant34", "wc19", "restaurant1"
 ];
 
-const validateAndSuggest = (field) => {
+const validateAndSuggest = (field, index = null) => {
   let input;
   let suggestionsRef;
 
-  switch (field) {
-    case 'startLocation':
-      input = startLocation.value;
-      suggestionsRef = startLocationSuggestions;
-      break;
-    case 'viaPoint1':
-      input = viaPoint1.value;
-      suggestionsRef = viaPoint1Suggestions;
-      break;
-    case 'viaPoint2':
-      input = viaPoint2.value;
-      suggestionsRef = viaPoint2Suggestions;
-      break;
-    case 'endLocation':
-      input = endLocation.value;
-      suggestionsRef = endLocationSuggestions;
-      break;
+  if (field === 'startLocation') {
+    input = startLocation.value;
+    suggestionsRef = startLocationSuggestions;
+  } else if (field === 'endLocation') {
+    input = endLocation.value;
+    suggestionsRef = endLocationSuggestions;
+  } else if (field === 'viaPoints') {
+    input = viaPoints.value[index];
+    suggestionsRef = viaPointSuggestions;
+    suggestionsRef[index] = validNodes.filter(node => node.toLowerCase().includes(input.toLowerCase()));
   }
 
-  if (!validNodes.includes(input)) {
+  if (field !== 'viaPoints' && !validNodes.includes(input)) {
     errorMessage.value = '请输入合法的节点名称';
   } else {
     errorMessage.value = '';
   }
-  const query = input.toLowerCase();
-  suggestionsRef.value = validNodes.filter(node => node.toLowerCase().includes(query));
+
+  if (field !== 'viaPoints') {
+    const query = input.toLowerCase();
+    suggestionsRef.value = validNodes.filter(node => node.toLowerCase().includes(query));
+  }
 };
 
-const selectSuggestion = (field, suggestion) => {
-  switch (field) {
-    case 'startLocation':
-      startLocation.value = suggestion;
-      startLocationSuggestions.value = [];
-      break;
-    case 'viaPoint1':
-      viaPoint1.value = suggestion;
-      viaPoint1Suggestions.value = [];
-      break;
-    case 'viaPoint2':
-      viaPoint2.value = suggestion;
-      viaPoint2Suggestions.value = [];
-      break;
-    case 'endLocation':
-      endLocation.value = suggestion;
-      endLocationSuggestions.value = [];
-      break;
+const selectSuggestion = (field, suggestion, index = null) => {
+  if (field === 'startLocation') {
+    startLocation.value = suggestion;
+    startLocationSuggestions.value = [];
+  } else if (field === 'endLocation') {
+    endLocation.value = suggestion;
+    endLocationSuggestions.value = [];
+  } else if (field === 'viaPoints') {
+    viaPoints.value[index] = suggestion;
+    viaPointSuggestions[index] = [];
   }
 };
 
@@ -199,7 +184,7 @@ const searchRoute = async () => {
       response = await axios.post('http://localhost:8000/api/routes/multi-destinations/', {
         startLocation: startLocation.value,
         endLocation: endLocation.value,
-        viaPoints: [viaPoint1.value, viaPoint2.value],
+        viaPoints: viaPoints.value,
         strategy: strategy.value
       });
     }
@@ -232,6 +217,12 @@ const searchRoute = async () => {
 const inputFocus = () => {
   errorMessage.value = ''; // 清除错误消息
 };
+
+// 监听途径点数量变化，动态调整途径点输入框
+watch(viaPointCount, (newCount) => {
+  viaPoints.value = Array(newCount).fill('');
+  viaPointSuggestions.value = Array(newCount).fill([]);
+});
 </script>
 
 <style scoped>
