@@ -2,9 +2,14 @@
   <div class="recommendation-container">
     <div class="header">
       <h2>推荐目的地</h2>
-      <button class="search-button" @click="navigateToSearch">
-        🔍
-      </button>
+      <div>
+        <button class="search-button" @click="navigateToSearch">
+          🔍
+        </button>
+        <button class="aigc-button" @click="navigateToAIGCVideo">
+          AIGC 视频
+        </button>
+      </div>
     </div>
 
     <div v-if="isLoading" class="loading">加载中...</div>
@@ -110,6 +115,10 @@ const navigateToTravel = () => {
   router.push({ name: 'Travel' });
 };
 
+const navigateToAIGCVideo = () => {
+  router.push({ name: 'VideoList' });
+};
+
 onMounted(fetchRecommendations);
 </script>
 
@@ -143,6 +152,7 @@ h2 {
   cursor: pointer;
   color: #333;
   transition: transform 0.3s ease;
+  margin-right: 10px;
 }
 
 .search-button:hover {
@@ -200,6 +210,23 @@ h2 {
   color: #555;
 }
 
+/* AIGC 视频按钮样式 */
+.aigc-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.aigc-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
+}
+
 /* 页面切换动画 */
 .fade-enter-active,
 .fade-leave-active {
@@ -207,10 +234,7 @@ h2 {
 }
 
 .fade-enter,
-.fade-leave-to
-
-/* .fade-leave-active in <2.1.8 */
-  {
+.fade-leave-to {
   opacity: 0;
 }
 </style>
