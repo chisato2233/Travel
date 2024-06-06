@@ -57,7 +57,7 @@
     <!-- 路径图片 -->
     <img v-if="routeImageUrl" :src="routeImageUrl" alt="路径图片" class="route-map">
     <!-- 调试信息 -->
-    <pre v-if="routeImageUrl">路径图片 URL: {{ routeImageUrl }}</pre>
+    <!-- <pre v-if="routeImageUrl">路径图片 URL: {{ routeImageUrl }}</pre> -->
   </div>
 
   <!-- 路径信息展示 -->
@@ -65,7 +65,10 @@
     <h3>路径信息</h3>
     <ul>
       <li v-for="(step, index) in steps" :key="index">
-        从 {{ step.from }} 到 {{ step.to }} - 距离: {{ step.distance }} km, 时间: {{ step.time }} 小时
+        <div class="step-info">
+          <span class="step-index">{{ index + 1 }}</span>
+          <span class="step-text">从 <strong>{{ step.from }}</strong> 到 <strong>{{ step.to }}</strong> - 距离: {{ step.distance }} km, 时间: {{ step.time }} 小时</span>
+        </div>
       </li>
     </ul>
   </div>
@@ -109,8 +112,7 @@ const validNodes = [
   "restaurant18", "supermarket7", "others40", "supermarket25", "others14", "restaurant8", "restaurant6", 
   "node55", "restaurant7", "others13", "node29", "supermarket35", "wc2", "supermarket9", "restaurant38", 
   "wc3", "restaurant28", "node16", "node20", "others26", "wc13", "node23", "supermarket36", "node49", 
-  "node60", "node53", "supermarket18", "others25", "node59", "node54", "wc10", "others32", "restaurant20", 
-  "supermarket40", "others10", "others37", "restaurant9", "restaurant32", "supermarket2", "others5", 
+  "node60", "node53", "supermarket18", "others25", "node59", "node54", "wc10", "others32", "restaurant20", "supermarket40", "others10", "others37", "restaurant9", "restaurant32", "supermarket2", "others5", 
   "restaurant10", "others3", "others2", "node50", "restaurant3", "node47", "restaurant5", "wc16", "node8", 
   "wc11", "node28", "node14", "node24", "wc5", "node35", "restaurant16", "supermarket8", "node38", 
   "supermarket5", "restaurant35", "node41", "node33", "wc6", "supermarket34", "wc15", "node34", 
@@ -122,10 +124,9 @@ const validNodes = [
   "others28", "others34", "others20", "node48", "others29", "wc17", "supermarket19", "node46", 
   "node11", "wc8", "node37", "supermarket11", "wc4", "others27", "restaurant27", "node43", "wc1", 
   "node18", "node21", "supermarket4", "restaurant33", "supermarket38", "restaurant30", "supermarket26", 
-  "others19", "restaurant13", "node42", "others11", "supermarket12", "others16", "node2", "node12", 
-  "restaurant2", "others38", "node4", "node22", "supermarket1", "restaurant29", "restaurant25", 
-  "node51", "restaurant19", "node13", "node40", "supermarket30", "restaurant23", "others23", 
-  "restaurant26", "restaurant24", "node36", "others30", "supermarket31", "restaurant34", "wc19", "restaurant1"
+  "others19", "restaurant13", "node42", "others23", "supermarket1", "supermarket12", "restaurant2", 
+  "node13", "restaurant25", "node4", "others11", "restaurant29", "node2", "restaurant23",   "node12", "supermarket30", "node40", "supermarket31", "supermarket32", "restaurant24", "restaurant34", 
+  "node36", "others30", "restaurant1"
 ];
 
 const validateAndSuggest = (field, index = null) => {
@@ -141,19 +142,18 @@ const validateAndSuggest = (field, index = null) => {
   } else if (field === 'viaPoints') {
     input = viaPoints.value[index];
     suggestionsRef = viaPointSuggestions;
-    suggestionsRef[index] = validNodes.filter(node => node.toLowerCase().includes(input.toLowerCase()));
   }
 
   if (field !== 'viaPoints' && !validNodes.includes(input)) {
+    errorMessage.value = '请输入合法的节点名称';
+  } else if (field === 'viaPoints' && !validNodes.includes(input)) {
     errorMessage.value = '请输入合法的节点名称';
   } else {
     errorMessage.value = '';
   }
 
-  if (field !== 'viaPoints') {
-    const query = input.toLowerCase();
-    suggestionsRef.value = validNodes.filter(node => node.toLowerCase().includes(query));
-  }
+  const query = input.toLowerCase();
+  suggestionsRef[index !== null ? index : 'value'] = validNodes.filter(node => node.toLowerCase().includes(query));
 };
 
 const selectSuggestion = (field, suggestion, index = null) => {
@@ -223,6 +223,7 @@ watch(viaPointCount, (newCount) => {
   viaPoints.value = Array(newCount).fill('');
   viaPointSuggestions.value = Array(newCount).fill([]);
 });
+
 </script>
 
 <style scoped>
@@ -243,17 +244,13 @@ h2 {
   width: 100%;
   padding: 8px;
   border-radius: 20px;
-  /* 两端圆形 */
   border: 1px solid #ccc;
 }
 
 .rounded-input:focus {
   outline: none;
-  /* 去掉默认的聚焦边框 */
   border-color: #4CAF50;
-  /* 聚焦时边框颜色 */
   box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-  /* 聚焦时的阴影效果 */
 }
 
 .search-button {
@@ -261,19 +258,15 @@ h2 {
   padding: 8px 16px;
   border: none;
   border-radius: 20px;
-  /* 两端圆形 */
   cursor: pointer;
   transition: background-color 0.3s;
   background-color: #4CAF50;
-  /* 绿色主色 */
   color: #fff;
 }
 
 .search-button[disabled] {
   background-color: #ccc;
-  /* 禁用状态下按钮颜色变成灰色 */
   cursor: not-allowed;
-  /* 设置鼠标样式为禁用 */
 }
 
 .error-message {
@@ -285,12 +278,9 @@ h2 {
 .travel-container {
   width: 400px;
   margin: 50px auto;
-  /* 50px 的顶部边距，水平居中 */
   padding: 50px;
-  /* 添加内边距，使内容与盒子模型边缘有一定距离 */
-  /*border: 1px solid #ccc; 添加边框 */
   border-radius: 10px;
-  /* 圆角边框 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .suggestions {
@@ -313,33 +303,34 @@ h2 {
   background-color: #eee;
 }
 
-/* 全局地图样式 */
 .global-map {
   width: 100%;
   max-width: 2000px;
-  /* 设置最大宽度以防止图片过大 */
   display: block;
-  /* 让图片居中显示 */
   margin: auto;
   margin-bottom: 20px;
-  /* 添加底部边距 */
 }
 
-/* 路径图片样式 */
 .route-map {
   width: 100%;
   max-width: 2000px;
-  /* 设置最大宽度以防止图片过大 */
   display: block;
-  /* 让图片居中显示 */
   margin: auto;
   margin-bottom: 20px;
-  /* 添加底部边距 */
 }
 
-/* 路径信息样式 */
 .route-info {
   margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.route-info h3 {
+  text-align: center;
+  color: #4CAF50;
+  margin-bottom: 20px;
 }
 
 .route-info ul {
@@ -349,5 +340,35 @@ h2 {
 
 .route-info li {
   margin-bottom: 10px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.step-info {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.step-index {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-color: #4CAF50;
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 30px;
+  margin-right: 10px;
+}
+
+.step-text {
+  flex-grow: 1;
+  color: #333;
 }
 </style>
+
