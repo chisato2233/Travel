@@ -105,7 +105,7 @@ const logout = async () => {
   try {
     const token = getToken();
     const refreshToken = getRefreshToken();
-    if (token && refreshToken) {
+    if (token) {
       const response = await axios.post('http://localhost:8000/api/users/logout/', { refreshToken: refreshToken }, {
         headers: {
           Authorization: `Bearer ${token}`

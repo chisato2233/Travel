@@ -86,7 +86,7 @@ export default {
         const getBestFitDimensions = (originalWidth, originalHeight) => {
             const aspectRatio = originalWidth / originalHeight;
             if (aspectRatio > 1) {
-                if (originalWidth > 1024) {
+                if (originalWidth >= 1024) {
                     return [1024, 576];
                 } else if (originalWidth > 768) {
                     return [768, 768];
