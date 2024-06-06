@@ -4,7 +4,14 @@
             <div class="card">
                 <button class="close-btn" @click="closeCard">×</button>
                 <h2>Upload New Video</h2>
-                <input type="file" @change="onFileChange" />
+                <button class="file-upload-btn" @click="triggerFileInput">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 16V4M8 12L12 16L16 12M4 20H20" stroke="white" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <input type="file" ref="fileInput" @change="onFileChange" style="display: none;" />
+
                 <div v-if="previewUrl" class="preview">
                     <img :src="previewUrl" alt="Image Preview" />
                 </div>
@@ -41,6 +48,11 @@ export default {
         const error = ref('');
         const errorDetails = ref([]);
         const generationId = ref('');
+        const fileInput = ref(null);
+
+        const triggerFileInput = () => {
+            fileInput.value.click();
+        };
 
         const onFileChange = (event) => {
             const file = event.target.files[0];
@@ -178,6 +190,8 @@ export default {
             onFileChange,
             uploadImage,
             closeCard,
+            triggerFileInput,  // 确保方法被暴露
+            fileInput,         // 确保引用被暴露
         };
     },
 };
@@ -232,8 +246,8 @@ export default {
 .upload-btn {
     width: 60px;
     height: 60px;
-    background: yellow;
-    color: black;
+    background: linear-gradient(135deg, #ffcc00, #ff9900);
+    color: white;
     font-size: 24px;
     font-weight: bold;
     border: none;
@@ -243,44 +257,27 @@ export default {
     align-items: center;
     margin-top: 20px;
     cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease, transform 0.2s ease-in-out;
 }
 
-.upload-btn .loader {
-    border: 4px solid #f3f3f3;
+.upload-btn:hover {
+    background: linear-gradient(135deg, #ffcc00, #ff6600);
+    transform: scale(1.05);
+}
+
+.upload-btn:disabled {
+    background: gray;
+    cursor: not-allowed;
+}
+
+.loader {
+    border: 3px solid rgba(255, 255, 255, 0.6);
     border-radius: 50%;
-    border-top: 4px solid black;
-    width: 20px;
-    height: 20px;
-    animation: spin 2s linear infinite;
-}
-
-.preview img {
-    width: 100%;
-    max-height: 200px;
-    object-fit: cover;
-    margin-top: 20px;
-}
-
-.error {
-    color: red;
-}
-
-.error-details {
-    color: darkred;
-    font-size: 0.9em;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.slide-up-enter-active,
-.slide-up-leave-active {
-    transition: transform 0.5s ease;
-}
-
-.slide-up-enter,
-.slide-up-leave-to {
-    transform: translateY(100%);
+    border-top: 3px solid white;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
@@ -291,5 +288,57 @@ export default {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.error {
+    color: red;
+    margin-top: 10px;
+}
+
+.file-upload-btn {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #00ccff, #0066ff);
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease, transform 0.2s ease-in-out;
+}
+
+.file-upload-btn:hover {
+    background: linear-gradient(135deg, #00ccff, #0033ff);
+    transform: scale(1.05);
+}
+
+.preview img {
+    max-width: 100%;
+    max-height: 150px;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+
+.error-details {
+    color: red;
+    margin-top: 10px;
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+    transition: all 0.3s ease;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+    transform: translateY(100%);
 }
 </style>

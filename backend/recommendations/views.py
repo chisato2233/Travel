@@ -11,7 +11,7 @@ class DestinationRecommendationView(APIView):
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return Response({"error": "Unauthorized access."}, status=status.HTTP_401_UNAUTHORIZED)
-
+        #
         search_history = UserSearchHistory.objects.filter(user=request.user).order_by('-search_time')
 
         unique_attractions = list(set([entry.attraction for entry in search_history]))
