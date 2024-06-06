@@ -2,12 +2,16 @@
   <div class="recommendation-container">
     <div class="header">
       <h2>推荐目的地</h2>
-      <!-- 添加两个按钮 -->
-    <button class="nav-button" @click="navigateToAllLocations">查看全部景点</button>
-    <button class="nav-button" @click="navigateToAllNodes">查看全部节点</button>
-      <button class="search-button" @click="navigateToSearch">
-        🔍
-      </button>
+      <div>
+        <button class="nav-button" @click="navigateToAllLocations">查看全部景点</button>
+        <button class="nav-button" @click="navigateToAllNodes">查看全部节点</button>
+        <button class="search-button" @click="navigateToSearch">
+          🔍
+        </button>
+        <button class="aigc-button" @click="navigateToAIGCVideo">
+          AIGC 视频
+        </button>
+      </div>
     </div>
 
     <div v-if="isLoading" class="loading">加载中...</div>
@@ -117,6 +121,9 @@ const navigateToAllLocations = () => { // 导航到 AllLocations.vue
 
 const navigateToAllNodes = () => { // 导航到 AllNodes.vue
   router.push({ name: 'AllNodes' });
+}
+const navigateToAIGCVideo = () => {
+  router.push({ name: 'VideoList' });
 };
 
 onMounted(fetchRecommendations);
@@ -151,6 +158,7 @@ h2 {
   cursor: pointer;
   color: #333;
   transition: transform 0.3s ease;
+  margin-right: 10px;
 }
 
 .search-button:hover {
@@ -207,6 +215,24 @@ h2 {
   color: #555;
 }
 
+/* AIGC 视频按钮样式 */
+.aigc-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.aigc-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
+}
+
+/* 页面切换动画 */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
