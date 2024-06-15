@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from backend.recommendations.views import recommend_items
 from .models import load_data
 
 class RecommendationSerializer(serializers.Serializer):

@@ -38,6 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'backend.authentication',
+    'backend.diaries',
+    'backend.recommendations',
+    'backend.search',
+    'backend.tourist_routes',
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -53,8 +58,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
-    
 ]
 
 ROOT_URLCONF = 'travel.urls'
@@ -134,62 +137,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-SECRET_KEY = 'your-secret-key'
-
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
-INSTALLED_APPS = []
-
-MIDDLEWARE = []
-
-ROOT_URLCONF = ''
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-            ],
-        },
-    },
-]
-
-WSGI_APPLICATION = ''
-
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.json.JSONSerializer'
-
-DATABASES = {
-    'default': {
-        'ENGINE': '',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-    }
-}
-
-AUTH_PASSWORD_VALIDATORS = []
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
-
-STATIC_URL = '/static/'

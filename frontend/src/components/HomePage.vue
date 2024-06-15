@@ -28,7 +28,7 @@ import Login from './Login.vue';
 
 const recommendedDestinations = ref([]);
 const searchResults = ref([]);
-const isLoggedIn = ref(false); // 用户登录状态
+// 用户登录状态
 
 const performSearch = async (query) => {
   try {
@@ -60,16 +60,16 @@ const close = () => {
 };
 
 // 监听用户登录状态的变化，如果用户登录成功，则隐藏登录组件
-watch(isLoggedIn, (newValue) => {
+watch(localStorage.getItem("token"), (newValue) => {
   if (newValue) {
     close(); // 登录成功后关闭登录组件
   }
 });
 
-// 在进入主页后一段时间后显示登录组件
-setTimeout(() => {
-  openLogin();
-}, 5000); // 5秒后显示登录组件
+// // 在进入主页后一段时间后显示登录组件
+// setTimeout(() => {
+//   openLogin();
+// }, 5000); // 5秒后显示登录组件
 </script>
 
 <style scoped>
