@@ -2,14 +2,18 @@
   <div class="recommendation-container">
     <div class="header">
       <h2>推荐目的地</h2>
-      <div>
-        <button class="nav-button" @click="navigateToAllLocations">查看全部景点</button>
-        <button class="nav-button" @click="navigateToAllNodes">查看全部节点</button>
-        <button class="search-button" @click="navigateToSearch">
-          🔍
+      <div class="button-group">
+        <button class="nav-button" @click="navigateToAllLocations">
+          <i class="fas fa-map-marker-alt"></i>
         </button>
-        <button class="aigc-button" @click="navigateToAIGCVideo">
-          AIGC 视频
+        <button class="nav-button" @click="navigateToAllNodes">
+          <i class="fas fa-network-wired"></i>
+        </button>
+        <button class="nav-button" @click="navigateToSearch">
+          <i class="fas fa-search"></i>
+        </button>
+        <button class="nav-button" @click="navigateToAIGCVideo">
+          <i class="fas fa-video"></i>
         </button>
       </div>
     </div>
@@ -30,8 +34,6 @@
         </div>
       </div>
     </transition>
-
-    
 
     <!-- 登录组件 -->
     <Login v-if="!isLoggedIn && showLogin" @close="handleLoginClose" />
@@ -115,13 +117,14 @@ const navigateToTravel = () => {
   router.push({ name: 'Travel' });
 };
 
-const navigateToAllLocations = () => { // 导航到 AllLocations.vue
+const navigateToAllLocations = () => {
   router.push({ name: 'AllLocations' });
 };
 
-const navigateToAllNodes = () => { // 导航到 AllNodes.vue
+const navigateToAllNodes = () => {
   router.push({ name: 'AllNodes' });
-}
+};
+
 const navigateToAIGCVideo = () => {
   router.push({ name: 'VideoList' });
 };
@@ -146,23 +149,14 @@ onMounted(fetchRecommendations);
   margin-bottom: 20px;
 }
 
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
 h2 {
   margin: 0;
   color: #333;
-}
-
-.search-button {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #333;
-  transition: transform 0.3s ease;
-  margin-right: 10px;
-}
-
-.search-button:hover {
-  transform: scale(1.1);
 }
 
 .loading {
@@ -215,20 +209,34 @@ h2 {
   color: #555;
 }
 
-/* AIGC 视频按钮样式 */
+/* 按钮样式 */
+.nav-button,
+.search-button,
 .aigc-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  color: #fff;
-  background-color: #007bff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #4CAF50;
+  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 50%;
   cursor: pointer;
+  font-size: 18px;
   transition: background-color 0.3s, transform 0.3s;
 }
 
+.nav-button i,
+.search-button i,
+.aigc-button i {
+  margin: 0;
+}
+
+.nav-button:hover,
+.search-button:hover,
 .aigc-button:hover {
-  background-color: #0056b3;
+  background-color: #45a049;
   transform: scale(1.1);
 }
 
@@ -241,21 +249,5 @@ h2 {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
-}
-
-/* 新添加的按钮样式 */
-.nav-button {
-  background-color: #4CAF50; /* 绿色 */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  cursor: pointer;
-  margin-right: 10px;
-  transition: transform 0.3s ease;
-}
-
-.nav-button:hover {
-  transform: scale(1.05);
 }
 </style>

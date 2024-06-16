@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from backend.models import Attraction
 
-def recommend_attractions(attraction_id, top_n=5):
+def recommend_attractions(attraction_id, top_n=1):
     attractions = Attraction.objects.all()
     descriptions = [attraction.description for attraction in attractions]
 
